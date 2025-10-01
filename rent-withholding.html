@@ -227,13 +227,9 @@
           <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]" @click="closeAlert"></div>
         
           <!-- 卡片 -->
-          <div class="relative bg-white rounded-2xl shadow-xl w-[min(90vw,520px)] p-8 text-center">
-            <!-- 圖示 -->
+          <div class="relative bg-white shadow-xl w-[min(90vw,520px)] p-8 text-center">
             <div class="mx-auto mb-6 flex items-center justify-center w-12 h-12 rounded-full bg-rose-100">
-              <!-- 警告 icon（可換你的圖） -->
-              <svg class="w-6 h-6 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-              </svg>
+              <img src="./images/alert.svg" alt="" class="w-6 h-6">
             </div>
         
             <!-- 內容 -->
@@ -243,7 +239,7 @@
         
             <!-- 按鈕 -->
             <button
-              class="mt-8 inline-flex items-center justify-center rounded-lg px-8 py-3 bg-amber-500 hover:bg-amber-600 text-[#202020] font-medium shadow"
+              class="mt-8 inline-flex items-center justify-center px-8 py-3 bg-[#FDB902] hover:bg-amber-600 text-[#202020] font-medium shadow"
               @click="closeAlert"
             >好的</button>
           </div>
