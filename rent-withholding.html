@@ -37,7 +37,7 @@
           </div>
 
           <!-- 房東列 -->
-          <div class="space-y-4 mt-4">
+          <div class="space-y-4 mt-4" v-if="tab==='person'">
             <div v-for="(ll, idx) in landlords" :key="ll.id" class="grid grid-cols-1 gap-3 items-end"
               :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
               landlords.length>=2 ? 'border border-2 border-black p-4 md:border-0 md:p-0'  : ''">
@@ -55,8 +55,7 @@
                   <select v-model="ll.identity"
                     class="w-full rounded-lg border border-slate-200 px-3 py-2 appearance-none pr-8 bg-white">
                     <option value="local">本國人</option>
-                    <option value="foreign" v-if="tab==='person'">外國人</option>
-                    <option value="company" v-if="tab==='company'">公司</option>
+                    <option value="foreign">外國人</option>
                   </select>
                   <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
                     viewBox="0 0 20 20" fill="currentColor">
@@ -131,7 +130,17 @@
                 </label>
               </div>
             </div>
-
+            </div>
+            <div v-else>
+              <div class="mt-6">
+                <label class="block text-sm mb-2">每期租金</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
+                  <input type="number" min="0" step="1"
+                    class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
+                </div>
+              </div>
+            </div>
         </section>
 
         <!-- 右側結果 -->
@@ -139,7 +148,7 @@
           <h2 class="text-xl font-semibold mb-4">試算結果</h2>
 
           <div class="bg-[#F2F2F2] p-6">
-            <div v-for="(ll, idx) in landlords" :key="ll.id"
+            <div v-if="tab==='person'" v-for="(ll, idx) in landlords" :key="ll.id"
               class="mb-4">
               <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
                 房東{{ idx+1 }}： {{ '{' + identityLabel(ll) + '}' }}
@@ -192,6 +201,25 @@
               <p class="mt-2 text-xs text-[#4C4C4C]">* 本國人應於次月 10 日前繳納健保補充費。</p>
               <div class="border-t-4 border-[#E9AC06] mt-4 mb-6" v-if="idx<landlords.length-1"></div>
             </div>
+            <div>
+              <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
+                若房東是公司，則應跟房東索取租金發票，發票總金額為 $50,000 元
+              </div>
+              <ul class="space-y-2">
+                <li class="flex justify-between">
+                  <span class="text-[#4C4C4C]">銷售額</span>
+                  <span class="text-[#C81717] font-semibold">123</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-[#4C4C4C]">稅額</span>
+                  <span class="text-[#C81717] font-semibold">123</span>
+                </li>
+                <li class="flex justify-between">
+                  <span class="text-[#4C4C4C]">總金額</span>
+                  <span class="text-[#C81717] font-semibold">123</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -213,17 +241,13 @@
 
         const switchTab = (t) => {
           tab.value = t
-          // 切到公司時，身份改成 company；切回個人時，預設 local
-          landlords.value.forEach(l => {
-            l.identity = t === 'company' ? 'company' : 'local'
-          })
         }
 
         const duplicateLandlord = (idx) => {
           const nextId = Math.max(...landlords.value.map(l => l.id)) + 1
           landlords.value.splice(idx + 1, 0, {
             id: nextId,
-            identity: tab.value === 'company' ? 'company' : 'local',
+            identity: 'local',
             share: 0
           })
           evenShares()
