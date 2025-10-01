@@ -70,7 +70,7 @@
               <div>
                 <label class="block text-sm text-slate-500 mb-1">持有比例 (%)</label>
                 <input type="number" min="0" max="100" step="0.01" v-model.number="ll.share"
-                  class="w-full rounded-lg border border-slate-200 px-3 py-2" @blur="normalizeShares" />
+                  class="w-full rounded-lg border border-slate-200 px-3 py-2" />
               </div>
 
               <!-- 刪除 -->
@@ -236,7 +236,7 @@
         const rent = ref(0)
         const taxMode = ref('tax_included') // tax_included | tax_excluded
         const landlords = ref([
-          { id: 1, identity: 'local', share: 100 }
+          { id: 1, identity: 'local', share: 0 }
         ])
 
         const switchTab = (t) => {
@@ -250,29 +250,11 @@
             identity: 'local',
             share: 0
           })
-          evenShares()
         }
 
         const removeLandlord = (idx) => {
           if (landlords.value.length === 1) return
           landlords.value.splice(idx, 1)
-          evenShares()
-        }
-
-        const evenShares = () => {
-          const n = landlords.value.length
-          const base = Math.floor((100 / n) * 100) / 100 // 取兩位
-          landlords.value.forEach((l, i) => {
-            l.share = i === n - 1 ? +(100 - base * (n - 1)).toFixed(2) : base
-          })
-        }
-
-        const normalizeShares = () => {
-          // 讓總和 ≈ 100（允許微小誤差），最後一位調整
-          const n = landlords.value.length
-          if (n === 0) return
-          let sum = landlords.value.slice(0, n - 1).reduce((a, l) => a + (Number(l.share) || 0), 0)
-          landlords.value[n - 1].share = +(100 - sum).toFixed(2)
         }
 
         // 計算基礎（依含稅/未稅只做展示用，未做逆推）
@@ -318,7 +300,6 @@
         return {
           tab, rent, taxMode, landlords,
           switchTab, duplicateLandlord, removeLandlord,
-          evenShares, normalizeShares,
           shareBase, withholdingRate, applyNhi, payable,
           identityLabel, moneyFmt,
           totalBase, totalWithheld, totalNhi, totalPayable
