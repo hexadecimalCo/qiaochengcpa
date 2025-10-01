@@ -87,7 +87,7 @@
               <div class="col-span-12 sm:col-span-3">
                 <button
                   class="px-3 py-2 rounded-lg border border border-slate-200 hover:bg-slate-50 flex items-center gap-2"
-                  @click="duplicateLandlord(idx)">
+                  @click="onAddLandlord(idx)">
                   <img src="./images/circle-plus.svg" alt="新增房東" class="w-4 h-4">
                   新增房東</button>
               </div>
@@ -222,7 +222,32 @@
             </div>
           </div>
         </section>
-
+        <div v-if="alert.open" class="fixed inset-0 z-50 flex items-center justify-center">
+          <!-- 背景 -->
+          <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]" @click="closeAlert"></div>
+        
+          <!-- 卡片 -->
+          <div class="relative bg-white rounded-2xl shadow-xl w-[min(90vw,520px)] p-8 text-center">
+            <!-- 圖示 -->
+            <div class="mx-auto mb-6 flex items-center justify-center w-12 h-12 rounded-full bg-rose-100">
+              <!-- 警告 icon（可換你的圖） -->
+              <svg class="w-6 h-6 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              </svg>
+            </div>
+        
+            <!-- 內容 -->
+            <p class="text-2xl font-semibold text-[#4C4C4C] leading-relaxed">
+              請先設定所有房東的持有比例<br/>才能再新增房東
+            </p>
+        
+            <!-- 按鈕 -->
+            <button
+              class="mt-8 inline-flex items-center justify-center rounded-lg px-8 py-3 bg-amber-500 hover:bg-amber-600 text-[#202020] font-medium shadow"
+              @click="closeAlert"
+            >好的</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -232,6 +257,7 @@
 
     createApp({
       setup() {
+        const alert = ref({ open: false })
         const tab = ref('person') // person | company
         const rent = ref(0)
         const taxMode = ref('tax_included') // tax_included | tax_excluded
@@ -239,17 +265,21 @@
           { id: 1, identity: 'local', share: 0 }
         ])
 
+        const openAlert = () => { alert.value.open = true }
+        const closeAlert = () => { alert.value.open = false }
+
         const switchTab = (t) => {
           tab.value = t
         }
 
-        const duplicateLandlord = (idx) => {
+        const onAddLandlord = () => {
+          const allSet = landlords.value.every(l => Number(l.share) > 0)
+          if (!allSet) {
+            openAlert()
+            return
+          }
           const nextId = Math.max(...landlords.value.map(l => l.id)) + 1
-          landlords.value.splice(idx + 1, 0, {
-            id: nextId,
-            identity: 'local',
-            share: 0
-          })
+          landlords.value.push({ id: nextId, identity: 'local', share: 0 })
         }
 
         const removeLandlord = (idx) => {
@@ -299,7 +329,8 @@
 
         return {
           tab, rent, taxMode, landlords,
-          switchTab, duplicateLandlord, removeLandlord,
+          alert, openAlert, closeAlert,
+          switchTab, removeLandlord, onAddLandlord,
           shareBase, withholdingRate, applyNhi, payable,
           identityLabel, moneyFmt,
           totalBase, totalWithheld, totalNhi, totalPayable
