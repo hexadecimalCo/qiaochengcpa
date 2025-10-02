@@ -76,13 +76,8 @@
                   <label class="block text-sm text-slate-600 mb-1">收款金額（含稅額）</label>
                   <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                    <input
-                      type="text"
-                      inputmode="numeric" pattern="[0-9]*" maxlength="9"
-                      :value="inclusiveDisplay"
-                      @input="onInclusiveInput"
-                      class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2"
-                    />
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="9" :value="inclusiveDisplay"
+                      @input="onInclusiveInput" class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
                   </div>
                 </div>
 
@@ -111,19 +106,14 @@
                   <label class="block text-sm text-slate-600 mb-1">銷售額（未稅額）</label>
                   <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                    <input
-                      type="text" inputmode="numeric" pattern="[0-9]*" maxlength="9"
-                      :value="exclusiveDisplay"
-                      @input="onExclusiveInput"
-                      class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2"
-                    />
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="9" :value="exclusiveDisplay"
+                      @input="onExclusiveInput" class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
                   </div>
                 </div>
               </div>
 
-              <button
-                class="mt-4 inline-flex items-center gap-2 bg-[#EBEBEB] px-4 py-2 hover:bg-slate-50"
-                @click="resetForm">重新填寫</button>
+              <button class="mt-4 inline-flex items-center gap-2 bg-[#EBEBEB] px-4 py-2 hover:bg-slate-50"
+                @click="resetForm">{{tab==='triple' ? '重新填寫' : '清除資料'}}</button>
             </div>
           </div>
         </section>
@@ -134,25 +124,69 @@
           <div class="w-full overflow-x-auto overflow-y-hidden" style="-webkit-overflow-scrolling: touch;">
             <div ref="invoicePreview" class="relative bg-white w-[800px] overflow-x-scroll">
               <img :src="invoiceSrc" alt="發票範例圖" class="w-full rounded-lg shadow-sm select-none pointer-events-none" />
-              <div v-if="tab==='triple'" class="absolute left-24 top-[74px] text-[#FDB902] font-semibold select-none">{{ buyer.title || '必填'
+              <div v-if="tab==='triple'"
+                class="invoiceText absolute left-24 top-[74px] text-[#FDB902] font-semibold select-none">{{
+                buyer.title || '必填'
                 }}</div>
-              <div v-if="tab==='triple'" class="absolute left-[104px] top-[100px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
+              <div v-if="tab==='triple'"
+                class="invoiceText absolute left-[104px] top-[100px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
                 :class="buyer.taxId ? 'tracking-[10px]' : 'tracking-[0px]'">
                 {{ buyer.taxId || '必填' }}
               </div>
-              <div class="absolute bottom-[70px] left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+              <div class="invoiceText absolute left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
+                :class="tab==='triple' ? 'bottom-[70px] ' : 'bottom-[107px]'">
                 {{ inclusiveDisplay }}
               </div>
-              <div v-if="tab==='triple'" class="absolute bottom-[100px] left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
-                {{ vatAmount}}
+              <div
+                class="invoiceText absolute left-[50%] top-[193px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+                {{ tab==='triple' ? exclusiveDisplay : inclusiveDisplay }}
               </div>
-              <div class="absolute text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
-              :class="taxTypeTag">
+              <div
+                class="invoiceText absolute left-[314px] top-[196px] text-[#FDB902] font-bold text-[13px] opacity-80 select-none">
+                {{ tab==='triple' ? exclusiveDisplay : inclusiveDisplay }}
+              </div>
+              <div v-if="tab==='triple'"
+                class="invoiceText absolute bottom-[100px] left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+                {{ vatAmount }}
+              </div>
+              <div class="invoiceText absolute text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
+                :class="taxTypeTag">
                 V
+              </div>
+              <div class="invoiceText absolute top-[47px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
+                :class="monthPairInChinese[0]==='十一' ? 'left-[383px]' : 'left-[390px]'">
+                <span :class="monthPairInChinese[0]==='十一' ? 'pr-6' : 'pr-8'">{{ monthPairInChinese[0] }}</span>
+                <span>{{ monthPairInChinese[1] }}</span>
+              </div>
+              <div
+                class="invoiceText absolute top-[100px] left-[405px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+                <span class="pr-10">{{ new Date().getFullYear()-1911 }}</span>
+                <span class="pr-10">{{ new Date().getMonth() + 1 }}</span>
+                <span>{{ new Date().getDate() }}</span>
+              </div>
+              <div v-if="tab==='triple'"
+                class="invoiceText absolute top-[190px] left-[260px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+                1
+              </div>
+              <div
+                class="invoiceText absolute top-[47px] left-[295px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+                {{rocYearInChineseDigits}}
               </div>
               <div class="absolute top-[145px] left-[14px] font-bold text-[18px] opacity-80 border-t border-[#FDB902] border-4 select-none w-[680px]">
               </div>
-              <div v-if="tab==='triple'" class="absolute bottom-[130px] left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
+              <div class="invoiceText absolute left-[87px] flex justify-end gap-[20px] leading-none"
+                :class="tab==='triple' ? 'bottom-[45px]' : 'bottom-[85px]'">
+                <div class="invoiceTextLine absolute left-0 top-1/2 translate-y-1/2 h-[4px] bg-[#FDB902]"
+                  :style="{ width: emptiesWidth }"></div>
+                <span v-for="(ch, i) in chineseSlots" :key="i"
+                  class="relative inline-block w-[31px] h-[22px] text-center select-none">
+                  <span v-if="ch" class="relative z-10 text-[#FDB902] font-bold text-[18px] leading-[22px]">
+                    {{ ch }}
+                  </span>
+                </span>
+              </div>
+              <div v-if="tab==='triple'"
+                class="invoiceText absolute bottom-[130px] left-[50%] text-[#FDB902] font-bold text-[18px] opacity-80 select-none">
                 {{ exclusiveDisplay}}
               </div>
             </div>
@@ -208,19 +242,21 @@
 
         const POS = {
           triple: {
-            '應稅':   'bottom-[90px] left-[25%]',
+            '應稅': 'bottom-[90px] left-[25%]',
             '零稅率': 'bottom-[90px] left-[35%]',
-            '免稅':   'bottom-[90px] left-[45%]',
+            '免稅': 'bottom-[90px] left-[45%]',
           },
           double: {
-            '應稅':   'bottom-[50px] left-[33%]',
+            '應稅': 'bottom-[50px] left-[33%]',
             '零稅率': 'bottom-[50px] left-[50%]',
-            '免稅':   'bottom-[50px] left-[65%]',
+            '免稅': 'bottom-[50px] left-[65%]',
           },
         }
         const MAX_LEN = 9
         const MAX_INC = 999_999_999
         const MAX_EXC = 952_380_951
+        const SLOT_W = 31 // 每個大寫國字寬度
+        const GAP = 20  // 間距
         const onlyDigits = s => String(s ?? '').replace(/\D/g, '')
         // 金額轉換
         const round0 = n => Math.max(0, Math.round(Number(n) || 0))
@@ -234,6 +270,51 @@
         const taxTypeTag = computed(() => POS[tab.value]?.[taxType.value] ?? 'bottom-0 left-0')
 
         const vatAmount = computed(() => round0(exclusive.value * rate.value))
+
+        const rocYearInChineseDigits = computed(() => {
+          const roc = new Date().getFullYear() - 1911; // 2025 → 114
+          const map = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+          return String(roc).split('').map(d => map[Number(d)]).join(''); // 114 → "一一四"
+        })
+
+        const mapDigitToUpper = (d) => (['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'])[d];
+
+        const chineseSlots = computed(() => {
+          const n = round0(inclusive.value);
+          const s = n === 0 ? '' : String(n);
+
+          // 固定 9 格，從右往左填入
+          const slots = Array(MAX_LEN).fill('');
+          if (n === 0) {
+            // 將「零」放在最右邊（個位數格）
+            slots[MAX_LEN - 1] = '零'
+            return slots
+          }
+          for (let i = 0; i < s.length && i < MAX_LEN; i++) {
+            const digit = Number(s[s.length - 1 - i]);
+            slots[MAX_LEN - 1 - i] = mapDigitToUpper(digit);
+          }
+          return slots;
+        });
+
+        const emptiesWidth = computed(() => {
+          const used = String(round0(inclusive.value)).length
+          const empties = Math.max(0, MAX_LEN - used)
+          return `${empties * (SLOT_W + GAP)}px`
+        })
+
+        const numToCnMonth = (n) => {
+          const d = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+          if (n <= 10) return n === 10 ? '十' : d[n];
+          return '十' + d[n - 10]; // 11→十一, 12→十二
+        }
+
+        const monthPairInChinese = computed(() => {
+          const m = new Date().getMonth() + 1; // 1~12
+          const start = m % 2 === 0 ? m - 1 : m; // 偶數回到前一個奇數
+          const end = start + 1;
+          return [numToCnMonth(start), numToCnMonth(end)];
+        })
 
         // 輸入事件
         const onInclusiveInput = (e) => {
@@ -274,7 +355,13 @@
           if (!invoicePreview.value) return
           const canvas = await html2canvas(invoicePreview.value, {
             backgroundColor: '#ffffff', // 白底
-            scale: 2                     // 較高解析度
+            scale: 2,                     // 較高解析度 
+            onclone: (doc) => {
+              doc.querySelectorAll('.invoiceText').forEach((el) => {
+                el.style.transform = 'translate(0, -8px)';
+              });
+              doc.querySelector('.invoiceTextLine').style.transform = 'translate(0, 8px)';
+            }
           })
           const link = document.createElement('a')
           link.download = 'invoice.png'
@@ -284,10 +371,11 @@
 
 
         return {
-          tab, buyer, rate, taxType,taxTypeTag,
+          tab, buyer, rate, taxType, taxTypeTag,
           inclusiveDisplay, exclusiveDisplay, vatAmount,
           onInclusiveInput, onExclusiveInput, resetForm,
-          formatMoney, invoiceSrc, invoicePreview, downloadImage
+          formatMoney, invoiceSrc, invoicePreview, downloadImage,
+          rocYearInChineseDigits, monthPairInChinese, chineseSlots, emptiesWidth
         }
       }
     }).mount('#app')
