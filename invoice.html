@@ -14,8 +14,8 @@
   </style>
 </head>
 
-<body class="min-h-dvh">
-  <div id="app" v-cloak class="max-w-7xl mx-auto p-6">
+<body>
+  <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
     <div class="bg-white border border-slate-200 shadow-sm p-6">
 
       <!-- Tabs -->
@@ -30,7 +30,7 @@
             <span class="absolute left-0 right-0 -bottom-[1px] h-[3px] bg-amber-500 rounded"
               v-show="tab==='triple'"></span>
           </button>
-  
+
           <button class="relative px-4 py-3 text-slate-600"
             :class="tab==='double' ? 'text-amber-600 font-medium' : 'hover:text-slate-800'" @click="tab='double'">
             <span class="inline-flex items-center gap-2">
@@ -122,17 +122,21 @@
 
         <!-- 右側預覽 -->
         <section>
-          <h3 class="sr-only">發票範例圖</h3>
-          <div ref="invoicePreview" class="relative border border-slate-200 rounded-xl p-4 bg-white">
-            <img :src="invoiceSrc" alt="發票範例圖" class="w-full rounded-lg shadow-sm select-none pointer-events-none" />
-            <div class="absolute left-24 top-[74px] text-[#FDB902] font-semibold select-none">{{ buyer.title || '必填' }}</div>
-            <div class="absolute left-[104px] top-[100px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none" :class="buyer.taxId ? 'tracking-[8px]' : 'tracking-[0px]'">
-              {{ buyer.taxId || '必填' }}
+          <h3 class="text-lg font-semibold mb-3">發票範例圖</h3>
+          <div class="w-full overflow-x-auto overflow-y-hidden" style="-webkit-overflow-scrolling: touch;">
+            <div ref="invoicePreview" class="relative bg-white w-[800px] overflow-x-scroll">
+              <img :src="invoiceSrc" alt="發票範例圖" class="w-full rounded-lg shadow-sm select-none pointer-events-none" />
+              <div class="absolute left-24 top-[74px] text-[#FDB902] font-semibold select-none">{{ buyer.title || '必填'
+                }}</div>
+              <div class="absolute left-[104px] top-[100px] text-[#FDB902] font-bold text-[18px] opacity-80 select-none"
+                :class="buyer.taxId ? 'tracking-[10px]' : 'tracking-[0px]'">
+                {{ buyer.taxId || '必填' }}
+              </div>
             </div>
           </div>
         </section>
       </div>
-      <div class="mt-8 w-full flex justify-center"> 
+      <div class="mt-8 w-full flex justify-center">
         <button @click="downloadImage"
           class="inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[480px]">
           <img src="./images/download.svg" alt="" srcset="">

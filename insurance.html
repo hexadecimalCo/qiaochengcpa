@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>勞健保計算機</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    [v-cloak]{display:none}
+    body{letter-spacing:.1px}
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak class="max-w-[1320px] mx-auto">
+    <!-- 外框 -->
+    <div class="border border-slate-300 m-6">
+      <div ref="captureEl" class="relative bg-white py-6 px-24 overflow-hidden">
+        <!-- 漂水印 -->
+        <div class="pointer-events-none absolute inset-0"
+            style="background-image:url('./images/logo-bg.svg');background-repeat:repeat;background-size:cover;"></div>
+  
+        <!-- 內容 -->
+        <div class="relative">
+          <!-- 標題 & 說明行 -->
+          <h2 class="text-[22px] font-semibold text-slate-800">金額</h2>
+          <p class="text-[13px] text-slate-600 mt-1">輸入月薪資或試算 21.8 日的時薪</p>
+  
+          <!-- 上層輸入列（與截圖一致為橫向兩欄） -->
+          <div class="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <label class="block">
+              <span class="sr-only">薪資</span>
+              <div class="flex items-stretch border border-slate-300">
+                <select class="px-3 py-2 bg-slate-50 text-slate-700 border-r border-slate-300 outline-none">
+                  <option>NTS</option>
+                </select>
+                <input type="number" placeholder="輸入金額"
+                      class="w-full px-3 py-2 outline-none" v-model="form.salary">
+              </div>
+            </label>
+  
+            <label class="block">
+              <span class="sr-only">投保對象</span>
+              <div class="relative">
+                <select class="w-full px-3 py-2 border border-slate-300 outline-none appearance-none">
+                  <option>本人</option>
+                  <option>雇主</option>
+                </select>
+                <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </label>
+          </div>
+  
+          <!-- 細灰線 -->
+          <div class="mt-4 h-px bg-slate-200"></div>
+  
+          <!-- 表格標題列：左說明 + 四欄 -->
+          <div class="mt-3 grid grid-cols-5 text-[13px] text-slate-600">
+            <div class="col-span-1">勞保費分擔表</div>
+            <div class="text-center">勞保費</div>
+            <div class="text-center">健保費</div>
+            <div class="text-center">勞工退休金</div>
+            <div class="text-center">合計</div>
+          </div>
+  
+          <!-- 大表格區塊（與截圖一致：左側說明欄 + 四欄、全框線、欄間直線） -->
+          <div class="mt-2 border border-slate-300">
+            <div class="grid grid-cols-5 divide-x divide-slate-300">
+              <!-- 左說明欄 -->
+              <div class="p-4 space-y-3">
+                <div>
+                  <span class="text-[13px] text-slate-600">投保級距</span>
+                  <div class="text-[20px] leading-6 mt-1 text-slate-800">0 ~ 0</div>
+                </div>
+                <div class="text-[13px] text-slate-600">員工薪資為<span class="mx-1">NT$ 0</span></div>
+              </div>
+  
+              <!-- 四欄卡片：每欄上下分區 -->
+              <div class="p-4">
+                <div class="text-[12px] text-amber-600">★ 本人 20%</div>
+                <div class="mt-1 text-[28px] font-semibold text-slate-900">NT$0</div>
+                <div class="mt-4 border-t border-slate-200 pt-3">
+                  <div class="text-[12px] text-emerald-600">雇主 70%</div>
+                  <div class="text-[16px] font-medium text-slate-800 mt-1">NT$0</div>
+                </div>
+              </div>
+  
+              <div class="p-4">
+                <div class="text-[12px] text-amber-600">★ 本人 30%</div>
+                <div class="mt-1 text-[28px] font-semibold text-slate-900">NT$0</div>
+                <div class="mt-4 border-t border-slate-200 pt-3">
+                  <div class="text-[12px] text-emerald-600">雇主 60%</div>
+                  <div class="text-[16px] font-medium text-slate-800 mt-1">NT$0</div>
+                </div>
+              </div>
+  
+              <div class="p-4">
+                <div class="text-[12px] text-amber-600">★ 本人 0%</div>
+                <div class="mt-1 text-[28px] font-semibold text-slate-900">NT$0</div>
+                <div class="mt-4 border-t border-slate-200 pt-3">
+                  <div class="text-[12px] text-emerald-600">雇主 100%</div>
+                  <div class="text-[16px] font-medium text-slate-800 mt-1">NT$0</div>
+                </div>
+              </div>
+  
+              <div class="p-4">
+                <div class="text-[12px] text-amber-600">★ 本人負擔</div>
+                <div class="mt-1 text-[28px] font-semibold text-slate-900">NT$0</div>
+                <div class="mt-4 border-t border-slate-200 pt-3">
+                  <div class="text-[12px] text-emerald-600">雇主負擔</div>
+                  <div class="text-[16px] font-medium text-slate-800 mt-1">NT$0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- 下方兩卡（左淡黃、右墨綠），尺寸貼近截圖 -->
+          <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
+            <div class="p-5 bg-[#FBE29F] border border-slate-200">
+              <div class="text-[13px] text-slate-700">員工實領</div>
+              <div class="mt-1 text-[30px] font-semibold text-slate-900">NT$0</div>
+            </div>
+  
+            <div class="p-5 bg-[#16726D] text-white">
+              <div class="text-[13px] opacity-95">雇主實際支付</div>
+              <div class="mt-1 text-[30px] font-semibold">NT$0</div>
+              <p class="text-[12px] leading-5 opacity-95 mt-3">
+                以上數據為便捷試算結果，實際以主管機關與保險單位規定為準。<br/>
+                你仍需確認適用級距與加保規則等。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="my-7 flex justify-center">
+        <button @click="downloadImage"
+                class="inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[520px]">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/>
+          </svg>
+          下載圖片
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createApp, ref } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+
+    createApp({
+      setup() {
+        const captureEl = ref(null)
+        const form = ref({ salary: '' })
+
+        const downloadImage = async () => {
+          const el = captureEl.value
+          if (!el) return
+          const canvas = await html2canvas(el, {
+            backgroundColor: null,
+            useCORS: true,
+            scale: 2
+          })
+          const a = document.createElement('a')
+          a.href = canvas.toDataURL('image/png')
+          a.download = '勞健保計算機.png'
+          a.click()
+        }
+
+        return { captureEl, form, downloadImage }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
