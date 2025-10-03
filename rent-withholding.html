@@ -344,17 +344,20 @@
           }).format(v);
         };
 
-        const rentIncludeTax = (ll) => {
+        const rentIncludeTax = (ll) => { // done
           if (rent.value < 20000 || taxMode.value === 'tax_included') return Math.round(rent.value * ll.share / 100)
 
           return Math.round(rent.value / 0.8789 * ll.share / 100)
         }
-        const rentWithholding = (ll) => { //ing
+        const rentWithholding = (ll) => { // done
           const calcRent = Math.round(rent.value * ll.share / 100)
           if (calcRent < 20000) return 0
-
-          if (taxMode.value === 'tax_excluded' && calcRent >= 20000) {
+          if (taxMode.value === 'tax_included') {
+            if (calcRent * 0.1 <= 2000) return 0
             withholdingRate.value = 10
+            return Math.round(calcRent * 0.1)
+          } else {
+            if (calcRent < 20000) return 0
             return Math.round(Math.round(calcRent / 0.8789 * ll.share / 100) * 0.1)
           }
         }
@@ -370,13 +373,17 @@
           }
         }
         const rentTotal = (ll) => {
-          if (rent.value < 20000) return 0
-          return rent.value
+          const calcRent = Math.round(rent.value * ll.share / 100)
+          if (calcRent < 20000) return 0
+          return rentHealthInsurance(ll) + rentWithholding(ll)
         }
         const rentExcludeTax = (ll) => {
-          if (rent.value < 20000) return Math.round(rent.value * ll.share / 100)
-          if (taxMode.value === 'tax_excluded') return ''
-          return rent.value
+          const calcRent = Math.round(rent.value * ll.share / 100)
+          if (calcRent < 20000) return Math.round(calcRent)
+          if (taxMode.value === 'tax_included') {
+            return calcRent - rentTotal(ll)
+          }
+          return calcRent
         }
 
 
