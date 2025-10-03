@@ -1,0 +1,49 @@
+name: Deploy to Windows Server (SCP Direct Key Method - Env Vars)
+
+on:
+  push:
+    branches:
+      - main # 當推送到 main 分支時觸發此 workflow
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # GitHub Actions runner 運行在 Ubuntu 環境
+
+    steps:
+      - name: 檢查程式碼
+        uses: actions/checkout@v4 # 檢出你的 repository 程式碼
+
+      - name: 測試 SFTP 連線到 Windows 伺服器
+        run: |
+          # 將私鑰內容寫入檔案並設定正確權限
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+          # 使用 sftp 命令測試 SFTP 子系統連線
+          # -i private_key.pem: 指定要使用的私鑰檔案
+          # -v: 啟用詳細模式，提供更多調試信息
+          # -o StrictHostKeyChecking=no: 禁用主機金鑰檢查
+          # -P 22: 指定 SSH 埠號為 22 (P 大寫)
+          # -b -: 從標準輸入讀取命令（這裡不執行任何命令，只是測試連線）
+          sftp -i private_key.pem -v -o StrictHostKeyChecking=no -P 22 -b - ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} <<EOF
+          ls # 嘗試列出遠端目錄，確認 SFTP 連線是否正常
+          quit
+          EOF
+
+      - name: 在目標伺服器執行 git pull
+        run: |
+          # 將私鑰內容寫入檔案並設定正確權限
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+
+          # 使用 ssh 命令連接到目標伺服器並執行 git pull
+          # -i private_key.pem: 指定要使用的私鑰檔案
+          # -o StrictHostKeyChecking=no: 禁用主機金鑰檢查
+          # -P 22: 指定 SSH 埠號為 22 (P 大寫)
+          # cd ${{ secrets.SSH_TARGET_PATH }} && git pull: 切換到目標目錄並執行 git pull
+          ssh -i private_key.pem -o StrictHostKeyChecking=no -P 22 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SSH_TARGET_PATH }} && git pull"
+
+      - name: 清理私鑰檔案 (所有步驟後)
+        if: always() # 確保即使前一步驟失敗也會執行此清理步驟
+        run: |
+          rm -f private_key.pem # 刪除臨時私鑰檔案
