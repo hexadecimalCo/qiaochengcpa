@@ -121,8 +121,8 @@
                 </div>
               </div>
 
-              <button class="mt-4 inline-flex items-center gap-2 bg-[#EBEBEB] px-4 py-2 hover:bg-slate-50"
-                @click="resetForm">{{tab==='triple' ? '重新填寫' : '清除資料'}}</button>
+              <button class="mt-4 inline-flex items-center gap-2 bg-[#EBEBEB] px-4 py-2 rounded-[6px]"
+                @click="resetForm">重新填寫</button>
             </div>
           </div>
         </section>
@@ -204,7 +204,7 @@
       </div>
       <div class="mt-8 w-full flex justify-center">
         <button @click="downloadImage"
-          class="inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[480px]">
+          class="inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[480px] rounded-[6px]">
           <img src="./images/download.svg" alt="" srcset="">
           下載圖片
         </button>
