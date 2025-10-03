@@ -40,8 +40,8 @@ jobs:
           # -i private_key.pem: 指定要使用的私鑰檔案
           # -o StrictHostKeyChecking=no: 禁用主機金鑰檢查
           # -P 22: 指定 SSH 埠號為 22 (P 大寫)
-          # cd ${{ secrets.SSH_TARGET_PATH }} && git pull: 切換到目標目錄並執行 git pull
-          ssh -i private_key.pem -o StrictHostKeyChecking=no -P 22 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.SSH_TARGET_PATH }} && git pull"
+          # 使用分號分隔命令，避免 PowerShell 解析問題
+          ssh -i private_key.pem -o StrictHostKeyChecking=no -P 22 ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} "cd '${{ secrets.SSH_TARGET_PATH }}'; git pull"
 
       - name: 清理私鑰檔案 (所有步驟後)
         if: always() # 確保即使前一步驟失敗也會執行此清理步驟
