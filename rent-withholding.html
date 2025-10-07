@@ -15,7 +15,7 @@
 
 <body>
   <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
-    <div class="bg-white border border border-slate-200 shadow-sm p-6">
+    <div class="bg-white border border border-slate-200 shadow-sm px-[14px] py-5 mx-2 md:mx-0 md:p-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
         <!-- 左側表單 -->
@@ -39,8 +39,9 @@
           <!-- 房東列 -->
           <div class="space-y-4 mt-4" v-if="tab==='person'">
             <div v-for="(ll, idx) in landlords" :key="ll.id">
-              <div class="grid grid-cols-1 gap-3 items-end" :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
-              landlords.length>=2 ? 'border border-2 border-black p-4 md:border-0 md:p-0'  : ''">
+              <div class="grid grid-cols-1  gap-3 items-end" 
+              :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
+              landlords.length>=2 ? 'border border-2 md:border-0 border-[#C5C5C5] md:border-black p-4 md:border-0 md:p-0'  : ''">
                 <!-- 房東名稱（唯讀展示） -->
                 <div>
                   <label class="block text-sm text-slate-500 mb-1">房東</label>
@@ -135,9 +136,9 @@
               </div>
 
               <div class="mt-6 flex items-end gap-6">
-                <label class="inline-flex items-center gap-2 cursor-pointer">
+                <label class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto">
                   <input type="radio" class="hidden peer" value="tax_included" v-model="taxMode" />
-                  <span class="relative w-4 h-4 rounded-full border
+                  <span class="relative w-5 h-5 rounded-full border
                         border-slate-300
                         peer-checked:border-amber-500
                         after:content-[''] after:absolute after:inset-1 after:rounded-full
@@ -147,9 +148,9 @@
                   <span class="text-slate-700 ">租金含稅</span>
                 </label>
 
-                <label class="inline-flex items-center gap-2 cursor-pointer">
+                <label class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto">
                   <input type="radio" class="hidden peer" value="tax_excluded" v-model="taxMode" />
-                  <span class="relative w-4 h-4 rounded-full border
+                  <span class="relative w-5 h-5 rounded-full border
                         border-slate-300
                         peer-checked:border-amber-500
                         after:content-[''] after:absolute after:inset-1 after:rounded-full
@@ -173,10 +174,12 @@
           </div>
         </section>
 
+        <div class="block w-full md:hidden border-t-4 border-[#E9AC06] mt-4">
+
+        </div>
         <!-- 右側結果 -->
         <section>
-          <h2 class="text-xl font-semibold mb-4">試算結果</h2>
-
+          <h2 class="text-[30px] text-center md:text-left md:text-xl font-semibold mb-4">試算結果</h2>
           <div class="bg-[#F2F2F2] p-6">
             <div v-if="tab==='person'" v-for="(ll, idx) in landlords" :key="ll.id" class="mb-4">
               <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
@@ -185,7 +188,7 @@
               <ul class="space-y-2">
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">每期租金（含稅）</span>
-                  <span class="text-[#C81717] font-semibold">{{ moneyFmt(rentIncludeTax(ll), false) }}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentIncludeTax(ll), false) }}</span>
                 </li>
                 <li class="flex justify-between items-start">
                   <span class="inline-flex items-center gap-2 text-[#4C4C4C]">
@@ -204,25 +207,25 @@
                       </div>
                     </div>
                   </span>
-                  <span class="text-[#C81717] font-semibold">
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
                     {{ moneyFmt(rentWithholding(ll), false) }}
                   </span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">二代健保 2.11%</span>
-                  <span class="text-[#C81717] font-semibold">
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
                     {{ moneyFmt(rentHealthInsurance(ll), false) }}
                   </span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">租扣二代總金額</span>
-                  <span class="text-[#C81717] font-semibold">
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
                     {{ moneyFmt(rentTotal(ll), false) }}
                   </span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">實際支付租金（未稅）</span>
-                  <span class="text-[#C81717] font-semibold">{{ moneyFmt(rentExcludeTax(ll), false) }}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentExcludeTax(ll), false) }}</span>
                 </li>
               </ul>
               <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'local'">* 本國人應於次月 10 日前繳納健保補充費。</p>
@@ -232,20 +235,20 @@
             </div>
             <div v-if="tab==='company'">
               <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
-                若房東是公司，則應跟房東索取租金發票，發票總金額為 {{moneyFmt(displayRent, false)}} 元
+                若房東是公司，則應跟房東索取租金發票，發票總金額為 {{moneyFmt(rent, false)}} 元
               </div>
               <ul class="space-y-2">
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">銷售額</span>
-                  <span class="text-[#C81717] font-semibold">{{moneyFmt(displayRent * 0.95, false)}}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05, false)}}</span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">稅額</span>
-                  <span class="text-[#C81717] font-semibold">{{moneyFmt(displayRent * 0.05, false)}}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05 * 0.05, false)}}</span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">總金額</span>
-                  <span class="text-[#C81717] font-semibold">{{moneyFmt(displayRent, false)}}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent, false)}}</span>
                 </li>
               </ul>
             </div>
