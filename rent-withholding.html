@@ -39,8 +39,8 @@
           <!-- 房東列 -->
           <div class="space-y-4 mt-4" v-if="tab==='person'">
             <div v-for="(ll, idx) in landlords" :key="ll.id">
-              <div class="grid grid-cols-1  gap-3 items-end" 
-              :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
+              <div class="grid grid-cols-1  gap-3 items-end"
+                :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
               landlords.length>=2 ? 'border border-2 md:border-0 border-[#C5C5C5] md:border-black p-4 md:border-0 md:p-0'  : ''">
                 <!-- 房東名稱（唯讀展示） -->
                 <div>
@@ -71,7 +71,7 @@
                 <div>
                   <label class="block text-sm text-slate-500 mb-1">持有比例 (%)</label>
                   <input type="number" min="0" max="100" step="1" v-model.number="ll.share"
-                    class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+                    @input="onShareInput(idx, $event)" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
                 </div>
 
                 <!-- 刪除 -->
@@ -188,7 +188,8 @@
               <ul class="space-y-2">
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">每期租金（含稅）</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentIncludeTax(ll), false) }}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentIncludeTax(ll), false)
+                    }}</span>
                 </li>
                 <li class="flex justify-between items-start">
                   <span class="inline-flex items-center gap-2 text-[#4C4C4C]">
@@ -197,13 +198,13 @@
                       <img src="./images/info-circle.svg" alt="" class="w-4 h-4 cursor-pointer">
                       <!-- Tooltip -->
                       <div class="absolute left-full top-1/2 -translate-y-1/2 ml-2
-                              w-[200px] px-3 py-2 rounded bg-slate-800 text-white text-xs leading-relaxed
+                              w-[200px] px-3 py-2 rounded bg-[#FDB902] text-black text-xs leading-relaxed
                               opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
                         扣繳只是先預繳房東個人綜合所得稅，不是會損失的稅金。<br />
                         會視房東個人綜所稅稅率退稅。<br />
                         例如：如果房東不需繳個人綜合所得稅，10% 就可以全額退回。
                         <!-- 箭頭 -->
-                        <div class="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 rotate-45 bg-slate-800"></div>
+                        <div class="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 rotate-45 bg-[#FDB902]"></div>
                       </div>
                     </div>
                   </span>
@@ -225,7 +226,8 @@
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">實際支付租金（未稅）</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentExcludeTax(ll), false) }}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentExcludeTax(ll), false)
+                    }}</span>
                 </li>
               </ul>
               <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'local'">* 本國人應於次月 10 日前繳納健保補充費。</p>
@@ -235,16 +237,18 @@
             </div>
             <div v-if="tab==='company'">
               <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
-                若房東是公司，則應跟房東索取租金發票，發票總金額為 {{moneyFmt(rent, false)}} 元
+                若房東是公司，則應跟房東索取租金發票，發票總金額為<span class="text-[#C81717]">{{moneyFmt(rent, false)}}</span>元
               </div>
               <ul class="space-y-2">
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">銷售額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05, false)}}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05,
+                    false)}}</span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">稅額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05 * 0.05, false)}}</span>
+                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05 * 0.05,
+                    false)}}</span>
                 </li>
                 <li class="flex justify-between">
                   <span class="text-[#4C4C4C]">總金額</span>
@@ -265,12 +269,14 @@
             </div>
 
             <!-- 內容 -->
-            <p class="text-2xl font-semibold text-[#4C4C4C] leading-relaxed">
-              請先設定所有房東的持有比例<br />才能再新增房東
-            </p>
+            <div>
+              <p class="text-2xl font-semibold text-[#4C4C4C] leading-relaxed" v-html="alert.message"></p>
+
+              <span v-if="alert.tips" class="text-sm text-[#4C4C4C]">{{alert.tips}}</span>
+            </div>
 
             <!-- 按鈕 -->
-            <button
+            <button ref="alertCloseBtn"
               class="mt-8 inline-flex items-center justify-center px-8 py-3 bg-[#FDB902] hover:bg-amber-600 text-[#202020] font-medium shadow"
               @click="closeAlert">好的</button>
           </div>
@@ -280,11 +286,12 @@
   </div>
 
   <script type="module">
-    import { createApp, ref, computed } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+    import { createApp, ref, computed, nextTick, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 
     createApp({
       setup() {
-        const alert = ref({ open: false })
+        const alertCloseBtn = ref(null)
+        const alert = ref({ open: false, message: '', tips: '' })
         const tab = ref('person') // person | company
         const rent = ref(0)
         const taxMode = ref('tax_included') // tax_included | tax_excluded
@@ -293,7 +300,40 @@
           { id: 1, identity: 'local', share: 100, has183: false, hasNhi: false }
         ])
 
-        const openAlert = () => { alert.value.open = true }
+        const openAlert = (msg, tips = '') => {
+          alert.value.open = true
+          alert.value.message = msg || '請先設定所有房東的持有比例<br />才能再新增房東'
+          alert.value.tips = tips
+
+          // 把焦點從 input 移開，避免鍵盤還能持續輸入
+          nextTick(() => {
+            const ae = document.activeElement
+            if (ae && typeof ae.blur === 'function') ae.blur()
+            alertCloseBtn.value?.focus()
+          })
+        }
+
+        watch(() => alert.value.open, (isOpen) => {
+          document.body.style.overflow = isOpen ? 'hidden' : ''
+        })
+
+        const shareTotal = computed(() =>
+          landlords.value.reduce((sum, l) => sum + (Number(l.share) || 0), 0)
+        )
+
+        const onShareInput = (idx, e) => {
+          const val = Number(e?.target?.value) || 0
+          const sumOthers = landlords.value.reduce((sum, l, i) => i === idx ? sum : sum + (Number(l.share) || 0), 0)
+          const allowed = Math.max(0, 100 - sumOthers)
+
+          if (val > allowed) {
+            landlords.value[idx].share = allowed
+            openAlert(`持有比例超過 100%`, `請調整比例總合為 100% 才能算出正確數字`)
+            return
+          }
+        }
+
+
         const closeAlert = () => { alert.value.open = false }
 
         const switchTab = (t) => {
@@ -314,12 +354,6 @@
         const removeLandlord = (idx) => {
           if (landlords.value.length === 1) return
           landlords.value.splice(idx, 1)
-        }
-
-        // 計算基礎（依含稅/未稅只做展示用，未做逆推）
-        const shareBase = (ll) => {
-          const ratio = (Number(ll.share) || 0) / 100
-          return Math.max(0, (Number(rent.value) || 0) * ratio)
         }
 
         const identityLabel = (ll) => {
@@ -394,7 +428,7 @@
           tab, rent, taxMode, landlords, withholdingRate,
           alert, openAlert, closeAlert,
           switchTab, removeLandlord, onAddLandlord,
-          identityLabel, moneyFmt,
+          identityLabel, moneyFmt, onShareInput,
           rentIncludeTax, rentWithholding, rentHealthInsurance, rentTotal, rentExcludeTax,
         }
       }
