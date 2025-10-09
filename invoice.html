@@ -226,6 +226,10 @@
   <script type="module">
     import { createApp, ref, computed, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
 
+    window.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.classList.remove('dark');
+    });
+
     createApp({
       setup() {
         // Tabs：三聯（公司）/ 二聯（個人）

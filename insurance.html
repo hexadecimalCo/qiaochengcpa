@@ -323,6 +323,10 @@
       return { items, byBase, lookupByBase }
     }
 
+    window.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.classList.remove('dark');
+    });
+
     // =========================
     // Vue App
     // =========================

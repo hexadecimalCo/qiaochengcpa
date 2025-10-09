@@ -294,6 +294,10 @@
 
   <script type="module">
     import { createApp, ref, computed, nextTick, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      document.documentElement.classList.remove('dark');
+    });
 
     createApp({
       setup() {
