@@ -24,8 +24,12 @@
     [v-cloak] {
       display: none
     }
-    body {
-      letter-spacing: .1px
+    :root { color-scheme: light; }
+    html, body {
+      background-color: white !important;
+    }
+    @media (prefers-color-scheme: dark) {
+      html, body { background:#fff !important; }
     }
   </style>
 </head>

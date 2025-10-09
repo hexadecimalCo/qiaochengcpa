@@ -23,6 +23,13 @@
     [v-cloak] {
       display: none
     }
+    :root { color-scheme: light; }
+    html, body {
+      background-color: white !important;
+    }
+    @media (prefers-color-scheme: dark) {
+      html, body { background:#fff !important; }
+    }
   </style>
 </head>
 
