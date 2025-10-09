@@ -134,12 +134,12 @@
             <div ref="invoicePreview" class="relative bg-white w-[800px] overflow-x-scroll">
               <img :src="invoiceSrc" alt="發票範例圖" class="w-full rounded-lg shadow-sm select-none pointer-events-none" />
               <div v-if="tab==='triple'"
-                class="invoiceText absolute left-24 top-[74px] text-[#1758C8] font-semibold select-none">{{
+                class="invoiceText absolute left-24 top-[70px] text-[#1758C8] font-semibold select-none">{{
                 buyer.title || '必填'
                 }}</div>
               <div v-if="tab==='triple'"
                 class="invoiceText absolute left-[100px] top-[100px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none"
-                :class="buyer.taxId ? 'tracking-[3px]' : 'tracking-[0px]'">
+                :class="buyer.taxId ? 'tracking-[11px]' : 'tracking-[0px]'">
                 {{ buyer.taxId || '必填' }}
               </div>
               <div class="invoiceText absolute left-[50%] text-[#1758C8] font-bold text-[18px] opacity-80 select-none"
@@ -184,8 +184,8 @@
               <div class="absolute top-[145px] left-[14px] font-bold text-[18px] opacity-80 border-t border-[#1758C8] border-4 select-none w-[680px]">
               </div>
               <div class="invoiceText absolute left-[87px] flex justify-end gap-[20px] leading-none"
-                :class="tab==='triple' ? 'bottom-[45px]' : 'bottom-[85px]'">
-                <div class="invoiceTextLine absolute left-0 top-1/2 translate-y-1/2 h-[4px] bg-[#1758C8]"
+                :class="tab==='triple' ? 'bottom-[42px]' : 'bottom-[82px]'">
+                <div class="invoiceTextLine absolute left-0 top-1/2 translate-y-[-2px] h-[4px] bg-[#1758C8]"
                   :style="{ width: emptiesWidth }"></div>
                 <span v-for="(ch, i) in chineseSlots" :key="i"
                   class="relative inline-block w-[31px] h-[22px] text-center select-none">
@@ -244,7 +244,7 @@
         watch(taxType, () => {
           if (taxType.value === '應稅') {
             rate.value = 0.05
-          } else if (taxType.value === '零稅率') {
+          } else {
             rate.value = 0
           }
         })
@@ -266,19 +266,22 @@
         const MAX_EXC = 952_380_951
         const SLOT_W = 31 // 每個大寫國字寬度
         const GAP = 20  // 間距
+
+        const moneyFmt = (n) => new Intl.NumberFormat('zh-TW', {
+            maximumFractionDigits: 0,
+            useGrouping: true,
+          }).format(Number(n) || 0)
+
         const onlyDigits = s => String(s ?? '').replace(/\D/g, '')
         // 金額轉換
         const round0 = n => Math.max(0, Math.round(Number(n) || 0))
         const toExclusive = (inc, r) => (Number(inc) || 0) / (1 + (Number(r) || 0))
         const toInclusive = (exc, r) => (Number(exc) || 0) * (1 + (Number(r) || 0))
         // 顯示（保留整數，符合你截圖的 $0 風格）
-        const inclusiveDisplay = computed(() => String(round0(inclusive.value)))
-        const exclusiveDisplay = computed(() => String(round0(exclusive.value)))
-
-
+        const inclusiveDisplay = computed(() => moneyFmt(inclusive.value))
+        const exclusiveDisplay = computed(() => moneyFmt(exclusive.value))
+        const vatAmount = computed(() => moneyFmt(exclusive.value * rate.value))
         const taxTypeTag = computed(() => POS[tab.value]?.[taxType.value] ?? 'bottom-0 left-0')
-
-        const vatAmount = computed(() => round0(exclusive.value * rate.value))
 
         const rocYearInChineseDigits = computed(() => {
           const roc = new Date().getFullYear() - 1911; // 2025 → 114
