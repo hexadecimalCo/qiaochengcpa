@@ -170,11 +170,11 @@
                 <span>{{ monthPairInChinese[1] }}</span>
               </div>
               <div
-                class="invoiceText absolute top-[100px] left-[405px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none w-[160px]">
+                class="invoiceText absolute left-[405px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none" :class="tab==='triple' ? 'top-[100px] w-[160px]' : 'top-[98px] w-[170px]'">
                 <div class="relative w-full">
-                  <span class="absolute left-[16px] -translate-x-1/2 w-[32px]">{{ new Date().getFullYear()-1911 }}</span>
-                  <span class="absolute left-[75px] -translate-x-1/2 w-[24px] text-center">{{ new Date().getMonth() + 1 }}</span>
-                  <span class="absolute right-[10px] -translate-x-1/2 w-[24px] text-center">{{ new Date().getDate() }}</span>
+                  <span class="absolute -translate-x-1/2 w-[32px]" :class="tab==='triple' ? 'left-[16px]' : 'left-[16px]'">{{ new Date().getFullYear()-1911 }}</span>
+                  <span class="absolute -translate-x-1/2 w-[24px] text-center" :class="tab==='triple' ? 'left-[75px]' : 'left-[80px]'">{{ new Date().getMonth() + 1 }}</span>
+                  <span class="absolute -translate-x-1/2 w-[24px] text-center" :class="tab==='triple' ? 'right-[10px]' : 'right-[0px]'">{{ new Date().getDate() }}</span>
                 </div>
               </div>
               <div v-if="tab==='triple'"
