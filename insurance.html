@@ -6,19 +6,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="theme-color" content="#ffffff" />
   <title>勞健保計算機</title>
-  <script>
-    tailwind.config = {
-      darkMode: false
-    }
-  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     [v-cloak] {
       display: none
     }
-    :root { color-scheme: light; }
-
     body {
       letter-spacing: .1px
     }
@@ -322,10 +315,6 @@
       const lookupByBase = makeBaseCeilLookup(byBase)
       return { items, byBase, lookupByBase }
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      document.documentElement.classList.remove('dark');
-    });
 
     // =========================
     // Vue App
