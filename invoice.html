@@ -8,7 +8,7 @@
   <title>發票計算機</title>
   <script>
     tailwind.config = {
-      darkMode: 'class'
+      darkMode: false
     }
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,12 +21,12 @@
   </style>
 </head>
 
-<body class="bg-white">
+<body>
   <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
     <div class="bg-white border border-slate-200 shadow-sm p-6">
 
       <!-- Tabs -->
-      <div class="flex justify-center ">
+      <div class="flex justify-center">
         <div class="gap-6 px-2">
           <button class="relative px-4 py-3 text-slate-600"
             :class="tab==='triple' ? 'text-amber-600 font-medium' : 'hover:text-slate-800'" @click="tab='triple'">
