@@ -7,6 +7,16 @@
   <meta name="theme-color" content="#ffffff" />
   <title>租金分攤試算（Vue CDN）</title>
   <script>
+    (function() {
+      const root = document.documentElement;
+      root.classList.remove('dark');
+
+      new MutationObserver(() => {
+        if (root.classList.contains('dark')) root.classList.remove('dark');
+        if (root.getAttribute('data-theme') === 'dark') root.setAttribute('data-theme', 'light');
+      }).observe(root, { attributes: true, attributeFilter: ['class','data-theme'] });
+    })();
+
     tailwind.config = {
       darkMode: false
     }
@@ -294,10 +304,6 @@
 
   <script type="module">
     import { createApp, ref, computed, nextTick, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-    
-    window.addEventListener('DOMContentLoaded', () => {
-      document.documentElement.classList.remove('dark');
-    });
 
     createApp({
       setup() {
