@@ -6,46 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <meta name="theme-color" content="#ffffff" />
   <title>租金分攤試算（Vue CDN）</title>
-  <script>
-    (function () {
-    function detectForcedDark() {
-      const probe = document.createElement('div');
-      probe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;background:#ffffff;color:#000000';
-      document.documentElement.appendChild(probe);
-      const cs = getComputedStyle(probe);
-      const bg = cs.backgroundColor;
-      const fg = cs.color;
-      probe.remove();
-      return !bg.startsWith('rgb(255, 255, 255)') && !fg.startsWith('rgb(0, 0, 0)');
-    }
-
-    function applyCounterInvert() {
-      if (document.documentElement.hasAttribute('data-force-light')) return;
-      document.documentElement.setAttribute('data-force-light', '1');
-      const style = document.createElement('style');
-      style.textContent = `
-        html[data-force-light] body { 
-          filter: invert(1) hue-rotate(180deg) !important;
-          background: #fff !important;
-        }
-        html[data-force-light] img,
-        html[data-force-light] video,
-        html[data-force-light] canvas,
-        html[data-force-light] svg { 
-          filter: invert(1) hue-rotate(180deg) !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    const run = () => { if (detectForcedDark()) applyCounterInvert(); };
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', run, { once: true });
-    } else {
-      run();
-    }
-  })();
-  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     [v-cloak] {
