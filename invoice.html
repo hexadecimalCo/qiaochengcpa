@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-darkreader-scheme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="color-scheme" content="light only" />
+    <meta name="darkreader-lock" />
     <meta name="theme-color" content="#ffffff" />
-    <meta name="color-scheme" content="light" />
     <title>發票計算機</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <script>
       tailwind.config = {
         darkMode: false,
@@ -18,33 +20,12 @@
       [v-cloak] {
         display: none;
       }
-      html,
-      body,
-      :root {
-        background-color: white !important;
-
-        -webkit-filter: none !important;
-        filter: none !important;
-
-        -webkit-background-blend-mode: normal !important;
-        background-blend-mode: normal !important;
-      }
-
-      /* @media (prefers-color-scheme: dark) {
-        html,
-        body,
-        :root {
-          background-color: #fff !important;
-          -webkit-filter: none !important;
-          filter: none !important;
-        }
-      } */
     </style>
   </head>
 
   <body>
     <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
-      <div class="bg-white border border-slate-200 shadow-sm p-6">
+      <div class="!bg-white border border-slate-200 shadow-sm p-6">
         <!-- Tabs -->
         <div class="flex justify-center">
           <div class="gap-6 px-2">

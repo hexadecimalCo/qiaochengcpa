@@ -1,433 +1,607 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light only" />
+    <meta name="darkreader-lock" />
+    <title>勞健保計算機</title>
+    <script>
+      tailwind.config = {
+        darkMode: false,
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+      [v-cloak] {
+        display: none;
+      }
+      :root {
+        color-scheme: light !important;
+      }
+      html,
+      body {
+        background-color: white !important;
+        -webkit-filter: none !important;
+        filter: none !important;
+      }
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background: #fff !important;
+        }
+      }
+    </style>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <meta name="theme-color" content="#ffffff" />
-  <title>勞健保計算機</title>
-  <script>
-    tailwind.config = {
-      darkMode: false
-    }
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <style>
-    [v-cloak] {
-      display: none
-    }
-    :root { color-scheme: light!important }
-    html, body {
-      background-color: white !important;
-      -webkit-filter: none !important;
-      filter: none !important;
-    }
-    @media (prefers-color-scheme: dark) {
-      html, body { background:#fff !important; }
-    }
-  </style>
-</head>
+  <body>
+    <div id="app" v-cloak class="max-w-[1320px] mx-auto">
+      <!-- 外框 -->
+      <div class="border border-[#C5C5C5] m-6">
+        <div
+          ref="captureEl"
+          class="relative bg-white px-[14px] py-[20px] md:py-6 md:px-24 overflow-hidden"
+        >
+          <!-- 浮水印 -->
+          <div
+            class="pointer-events-none absolute inset-0"
+            style="
+              background-image: url('./images/logo-bg.svg');
+              background-repeat: repeat;
+              background-size: cover;
+            "
+          ></div>
 
-<body>
-  <div id="app" v-cloak class="max-w-[1320px] mx-auto">
-    <!-- 外框 -->
-    <div class="border border-[#C5C5C5] m-6">
-      <div ref="captureEl" class="relative bg-white px-[14px] py-[20px] md:py-6 md:px-24 overflow-hidden">
-        <!-- 浮水印 -->
-        <div class="pointer-events-none absolute inset-0"
-          style="background-image:url('./images/logo-bg.svg');background-repeat:repeat;background-size:cover;"></div>
-
-        <!-- 內容 -->
-        <div class="relative">
-          <!-- 標頭輸入列 -->
-          <div class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3 border border-[#C5C5C5] p-3 md:p-[20px]">
-            <div>
-              <h2 class="text-[30px] font-semibold text-[#4C4C4C]">金額</h2>
-              <p class="text-[14px] text-slate-600 mt-1">輸入月薪表算出公司人員勞健保</p>
-            </div>
-
-            <div>
-              <label class="text-sm pb-2 block">薪資</label>
-              <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                <input type="number" inputmode="numeric" min="0" step="1" v-model.number="salary"
-                  class="w-full rounded-lg border border-[#C5C5C5] pl-12 pr-3 py-2" />
+          <!-- 內容 -->
+          <div class="relative">
+            <!-- 標頭輸入列 -->
+            <div
+              class="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3 border border-[#C5C5C5] p-3 md:p-[20px]"
+            >
+              <div>
+                <h2 class="text-[30px] font-semibold text-[#4C4C4C]">金額</h2>
+                <p class="text-[14px] text-slate-600 mt-1">
+                  輸入月薪表算出公司人員勞健保
+                </p>
               </div>
-            </div>
 
-            <div>
-              <label class="text-sm pb-2 block">投保對象</label>
-              <div class="relative">
-                <select class="w-full rounded-lg border border-[#C5C5C5] px-3 py-2 appearance-none pr-8 bg-white"
-                  v-model.number="healthPerson">
-                  <option :value="1">本人</option>
-                  <option :value="2">本人 + 1人</option>
-                  <option :value="3">本人 + 2人</option>
-                  <option :value="4">本人 + 3人</option>
-                </select>
-                <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                  viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                    clip-rule="evenodd" />
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- 表格標題列 -->
-          <div class="mt-3 grid grid-cols-1 gap-y-2 text-[13px] text-slate-600 md:grid-cols-5 md:gap-y-0">
-            <div class="md:col-span-1 text-center md:text-left text-[16px] text-[#4C4C4C] md:text-[13px]">勞保費分擔表</div>
-            <div class="hidden md:block text-right">勞保費</div>
-            <div class="hidden md:block text-right">健保費</div>
-            <div class="hidden md:block text-right">勞工退休金</div>
-            <div class="hidden md:block text-right">合計</div>
-          </div>
-
-          <!-- 大表格 -->
-          <div class="mt-2 border-y-none md:border-y border-[#C5C5C5]">
-            <div class="grid grid-cols-1 md:grid-cols-5">
-              <!-- 左說明欄 -->
-              <div class="flex flex-col justify-center space-y-3 pb-4 md:pb-0">
-                <div class="text-center md:text-left">
-                  <span class="text-[14px] text-[#4C4C4C]">投保級距</span>
-                  <div class="text-[24px] md:text-[30px] leading-8 mt-1 text-[#4C4C4C] font-bold">
-                    {{ rangeLabel }}
-                  </div>
-                </div>
-                <div class="text-[20px] text-[#4C4C4C] text-center md:text-left">
-                  員工薪資為 <span class="mx-1">{{ formatMoney(salary) }}</span>
+              <div>
+                <label class="text-sm pb-2 block">薪資</label>
+                <div class="relative">
+                  <span
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >NT$</span
+                  >
+                  <input
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    step="1"
+                    v-model.number="salary"
+                    class="w-full rounded-lg border border-[#C5C5C5] pl-12 pr-3 py-2"
+                  />
                 </div>
               </div>
 
-              <!-- 勞保 -->
-              <div class="border-l-none border-y md:border-y-0 md:border-l border-[#C5C5C5] text-center md:text-right">
-                <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">勞保費</div>
-                <div class="flex md:flex-col py-4 md:py-0">
-                  <div class="w-1/2 md:w-full pb-0 md:pb-4">
-                    <div class="text-[14px] text-[#E9AC06] mt-0 md:pt-4">本人 20%</div>
-                    <div class="mt-1 text-[28px] font-semibold text-slate-900">
-                      {{ formatMoney(employeeLabor) }}
+              <div>
+                <label class="text-sm pb-2 block">投保對象</label>
+                <div class="relative">
+                  <select
+                    class="w-full rounded-lg border border-[#C5C5C5] px-3 py-2 appearance-none pr-8 bg-white"
+                    v-model.number="healthPerson"
+                  >
+                    <option :value="1">本人</option>
+                    <option :value="2">本人 + 1人</option>
+                    <option :value="3">本人 + 2人</option>
+                    <option :value="4">本人 + 3人</option>
+                  </select>
+                  <svg
+                    class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- 表格標題列 -->
+            <div
+              class="mt-3 grid grid-cols-1 gap-y-2 text-[13px] text-slate-600 md:grid-cols-5 md:gap-y-0"
+            >
+              <div
+                class="md:col-span-1 text-center md:text-left text-[16px] text-[#4C4C4C] md:text-[13px]"
+              >
+                勞保費分擔表
+              </div>
+              <div class="hidden md:block text-right">勞保費</div>
+              <div class="hidden md:block text-right">健保費</div>
+              <div class="hidden md:block text-right">勞工退休金</div>
+              <div class="hidden md:block text-right">合計</div>
+            </div>
+
+            <!-- 大表格 -->
+            <div class="mt-2 border-y-none md:border-y border-[#C5C5C5]">
+              <div class="grid grid-cols-1 md:grid-cols-5">
+                <!-- 左說明欄 -->
+                <div
+                  class="flex flex-col justify-center space-y-3 pb-4 md:pb-0"
+                >
+                  <div class="text-center md:text-left">
+                    <span class="text-[14px] text-[#4C4C4C]">投保級距</span>
+                    <div
+                      class="text-[24px] md:text-[30px] leading-8 mt-1 text-[#4C4C4C] font-bold"
+                    >
+                      {{ rangeLabel }}
                     </div>
                   </div>
-                  <div class=" border-t-0 md:border-t border-[#C5C5C5] pt-0 md:pt-3 w-1/2 md:w-full">
-                    <div class="text-[14px] text-[#418E8B] font-medium">雇主 70%</div>
+                  <div
+                    class="text-[20px] text-[#4C4C4C] text-center md:text-left"
+                  >
+                    員工薪資為
+                    <span class="mx-1">{{ formatMoney(salary) }}</span>
+                  </div>
+                </div>
+
+                <!-- 勞保 -->
+                <div
+                  class="border-l-none border-y md:border-y-0 md:border-l border-[#C5C5C5] text-center md:text-right"
+                >
+                  <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">
+                    勞保費
+                  </div>
+                  <div class="flex md:flex-col py-4 md:py-0">
+                    <div class="w-1/2 md:w-full pb-0 md:pb-4">
+                      <div class="text-[14px] text-[#E9AC06] mt-0 md:pt-4">
+                        本人 20%
+                      </div>
+                      <div
+                        class="mt-1 text-[28px] font-semibold text-slate-900"
+                      >
+                        {{ formatMoney(employeeLabor) }}
+                      </div>
+                    </div>
+                    <div
+                      class="border-t-0 md:border-t border-[#C5C5C5] pt-0 md:pt-3 w-1/2 md:w-full"
+                    >
+                      <div class="text-[14px] text-[#418E8B] font-medium">
+                        雇主 70%
+                      </div>
+                      <div
+                        class="text-[28px] font-semibold text-slate-800 mt-1"
+                      >
+                        {{ formatMoney(companyLabor) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 健保 -->
+                <div class="text-center md:text-right">
+                  <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">
+                    健保費
+                  </div>
+                  <div class="flex md:flex-col">
+                    <div class="w-1/2 md:w-full pb-0 md:pb-4">
+                      <div class="text-[14px] text-[#E9AC06] pt-4">
+                        本人 30%
+                      </div>
+                      <div
+                        class="mt-1 text-[28px] font-semibold text-slate-900"
+                      >
+                        {{ formatMoney(employeeHealthAdj) }}
+                      </div>
+                    </div>
+                    <div
+                      class="border-t-0 md:border-t border-[#C5C5C5] py-4 w-1/2 md:w-full"
+                    >
+                      <div class="text-[14px] text-[#418E8B] font-medium">
+                        雇主 60%
+                      </div>
+                      <div
+                        class="text-[28px] font-semibold text-slate-800 mt-1"
+                      >
+                        {{ formatMoney(companyHealth) }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 勞退 -->
+                <div
+                  class="border-r-0 md:border-r border-[#C5C5C5] text-center md:text-right flex flex-col justify-end items-end md:items-start border-t md:border-t-0 border-[#C5C5C5]"
+                >
+                  <div
+                    class="block md:hidden text-center w-full pt-4 text-[16px] text-[#4C4C4C]"
+                  >
+                    勞工退休金
+                  </div>
+                  <div
+                    class="border-t-0 md:border-t border-[#C5C5C5] py-4 pr-0 md:pr-4 w-1/2 md:w-full"
+                  >
+                    <div class="text-[14px] text-[#418E8B] font-medium">
+                      雇主 100%
+                    </div>
                     <div class="text-[28px] font-semibold text-slate-800 mt-1">
-                      {{ formatMoney(companyLabor) }}
+                      {{ formatMoney(companyPension) }}
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- 健保 -->
-              <div class="text-center md:text-right">
-                <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">健保費</div>
-                <div class="flex md:flex-col">
-                  <div class="w-1/2 md:w-full pb-0 md:pb-4">
-                    <div class="text-[14px] text-[#E9AC06] pt-4">本人 30%</div>
-                    <div class="mt-1 text-[28px] font-semibold text-slate-900">
-                      {{ formatMoney(employeeHealthAdj) }}
+                <!-- 合計 -->
+                <div
+                  class="text-center md:text-right border-t md:border-t-0 border-b md:border-b-0 border-[#C5C5C5]"
+                >
+                  <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">
+                    合計
+                  </div>
+                  <div class="flex md:flex-col">
+                    <div class="w-1/2 md:w-full pb-0 md:pb-4">
+                      <div class="text-[14px] text-[#E9AC06] pt-4">
+                        本人負擔
+                      </div>
+                      <div
+                        class="mt-1 text-[28px] font-semibold text-slate-900"
+                      >
+                        {{ formatMoney(employeeTotalAdj) }}
+                      </div>
                     </div>
-                  </div>
-                  <div class=" border-t-0 md:border-t border-[#C5C5C5] py-4 w-1/2 md:w-full">
-                    <div class="text-[14px] text-[#418E8B] font-medium">雇主 60%</div>
-                    <div class="text-[28px] font-semibold text-slate-800 mt-1">
-                      {{ formatMoney(companyHealth) }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 勞退 -->
-              <div class="border-r-0 md:border-r border-[#C5C5C5] text-center md:text-right flex flex-col justify-end items-end md:items-start
-              border-t md:border-t-0 border-[#C5C5C5]">
-                <div class="block md:hidden text-center w-full pt-4 text-[16px] text-[#4C4C4C]">勞工退休金</div>
-                <div class=" border-t-0 md:border-t border-[#C5C5C5] py-4 pr-0 md:pr-4 w-1/2 md:w-full">
-                  <div class="text-[14px] text-[#418E8B] font-medium">雇主 100%</div>
-                  <div class="text-[28px] font-semibold text-slate-800 mt-1">
-                    {{ formatMoney(companyPension) }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- 合計 -->
-              <div class="text-center md:text-right border-t md:border-t-0 border-b md:border-b-0 border-[#C5C5C5]">
-                <div class="block md:hidden pt-4 text-[16px] text-[#4C4C4C]">合計</div>
-                <div class="flex md:flex-col">
-                  <div class="w-1/2 md:w-full pb-0 md:pb-4">
-                    <div class="text-[14px] text-[#E9AC06] pt-4">本人負擔</div>
-                    <div class="mt-1 text-[28px] font-semibold text-slate-900">
-                      {{ formatMoney(employeeTotalAdj) }}
-                    </div>
-                  </div>
-                  <div class=" border-t-0 md:border-t border-[#C5C5C5] py-4 w-1/2 md:w-full">
-                    <div class="text-[14px] text-[#418E8B] font-medium">雇主負擔</div>
-                    <div class="text-[28px] font-semibold text-slate-800 mt-1">
-                      {{ formatMoney(companyTotal) }}
+                    <div
+                      class="border-t-0 md:border-t border-[#C5C5C5] py-4 w-1/2 md:w-full"
+                    >
+                      <div class="text-[14px] text-[#418E8B] font-medium">
+                        雇主負擔
+                      </div>
+                      <div
+                        class="text-[28px] font-semibold text-slate-800 mt-1"
+                      >
+                        {{ formatMoney(companyTotal) }}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- 底部兩卡 -->
-          <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr]">
-            <div class="p-5 bg-[#FEDC80] border border-[#C5C5C5] h-full md:h-2/3">
-              <div class="text-[13px] text-slate-700">員工實領</div>
-              <div class="mt-1 text-[30px] font-semibold text-slate-900">
-                {{ formatMoney(takeHome) }}
-              </div>
-            </div>
-
-            <div>
-              <div class="p-5 bg-[#418E8B] text-white h-2/3">
-                <div class="text-[13px] opacity-95">雇主實際支付</div>
-                <div class="mt-1 text-[30px] font-semibold">
-                  {{ formatMoney(employerPay) }}
+            <!-- 底部兩卡 -->
+            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-[1fr_1fr]">
+              <div
+                class="p-5 bg-[#FEDC80] border border-[#C5C5C5] h-full md:h-2/3"
+              >
+                <div class="text-[13px] text-slate-700">員工實領</div>
+                <div class="mt-1 text-[30px] font-semibold text-slate-900">
+                  {{ formatMoney(takeHome) }}
                 </div>
               </div>
-              <p class="text-[14px] md:text-[12px] text-center md:text-left leading-5 opacity-95 mt-3 text-[#418E8B]">
-                尚未包含勞工保險職業災害費。<br />
-                ※以上計算以月計算，實際扣費金額以發單金額為主。
-              </p>
+
+              <div>
+                <div class="p-5 bg-[#418E8B] text-white h-2/3">
+                  <div class="text-[13px] opacity-95">雇主實際支付</div>
+                  <div class="mt-1 text-[30px] font-semibold">
+                    {{ formatMoney(employerPay) }}
+                  </div>
+                </div>
+                <p
+                  class="text-[14px] md:text-[12px] text-center md:text-left leading-5 opacity-95 mt-3 text-[#418E8B]"
+                >
+                  尚未包含勞工保險職業災害費。<br />
+                  ※以上計算以月計算，實際扣費金額以發單金額為主。
+                </p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- 匯出 -->
-      <div class="my-7 flex justify-center">
-        <button @click="downloadImage" :disabled="loading"
-          class="disabled:opacity-60 inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[520px]">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
-          </svg>
-          下載圖片
-        </button>
+        <!-- 匯出 -->
+        <div class="my-7 flex justify-center">
+          <button
+            @click="downloadImage"
+            :disabled="loading"
+            class="disabled:opacity-60 inline-flex items-center justify-center gap-2 bg-[#FDB902] text-[#202020] font-medium px-6 py-3 shadow w-[520px]"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"
+              />
+            </svg>
+            下載圖片
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script type="module">
-    import { createApp, ref, computed, onMounted, watchEffect } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js'
-    import Papa from 'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm'
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        computed,
+        onMounted,
+        watchEffect,
+      } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+      import Papa from "https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm";
 
-    // =========================
-    // 設定
-    // =========================
-    const EDIT_URL = "https://docs.google.com/spreadsheets/d/1z6qsgbPwIKqedJyaNpsuOxBE-q6zSzP8mukP45_7tDw/edit?gid=0#gid=0"
+      // =========================
+      // 設定
+      // =========================
+      const EDIT_URL =
+        "https://docs.google.com/spreadsheets/d/1z6qsgbPwIKqedJyaNpsuOxBE-q6zSzP8mukP45_7tDw/edit?gid=0#gid=0";
 
-    // =========================
-    // 工具：格式與解析
-    // =========================
-    const getCsvUrl = (editUrl) => {
-      const sheetId = editUrl.match(/\/d\/([^/]+)/)?.[1] ?? ''
-      const gid = (editUrl.match(/[?&#]gid=(\d+)/) || [, '0'])[1]
-      return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`
-    }
-    const toNum = (v) => {
-      const s = String(v ?? '').replace(/[, \u00A0]/g, '')
-      const n = Number(s)
-      return Number.isFinite(n) ? n : 0
-    }
-    const formatMoney = (n) =>
-      new Intl.NumberFormat('zh-TW', {
-        style: 'currency',
-        currency: 'TWD',
-        maximumFractionDigits: 0,
-        useGrouping: true,
-      }).format(Number(n) || 0)
+      // =========================
+      // 工具：格式與解析
+      // =========================
+      const getCsvUrl = editUrl => {
+        const sheetId = editUrl.match(/\/d\/([^/]+)/)?.[1] ?? "";
+        const gid = (editUrl.match(/[?&#]gid=(\d+)/) || [, "0"])[1];
+        return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+      };
+      const toNum = v => {
+        const s = String(v ?? "").replace(/[, \u00A0]/g, "");
+        const n = Number(s);
+        return Number.isFinite(n) ? n : 0;
+      };
+      const formatMoney = n =>
+        new Intl.NumberFormat("zh-TW", {
+          style: "currency",
+          currency: "TWD",
+          maximumFractionDigits: 0,
+          useGrouping: true,
+        }).format(Number(n) || 0);
 
-    // 「空輸入」顯示全 0
-    const ZERO_ROW = Object.freeze({
-      base: 0,
-      company: { labor: 0, health: 0, extra: 0, pension6: 0, total: 0 },
-      employee: { grade: 0, labor: 0, health: 0, total: 0 },
-      note: ''
-    })
-    const ZERO_SELECTION = Object.freeze({
-      base: 0, rangeMin: 0, rangeMax: 0, rangeLabel: '0 ~ 0', item: ZERO_ROW, capped: false
-    })
+      // 「空輸入」顯示全 0
+      const ZERO_ROW = Object.freeze({
+        base: 0,
+        company: { labor: 0, health: 0, extra: 0, pension6: 0, total: 0 },
+        employee: { grade: 0, labor: 0, health: 0, total: 0 },
+        note: "",
+      });
+      const ZERO_SELECTION = Object.freeze({
+        base: 0,
+        rangeMin: 0,
+        rangeMax: 0,
+        rangeLabel: "0 ~ 0",
+        item: ZERO_ROW,
+        capped: false,
+      });
 
-    // =========================
-    // 試算表資料→物件
-    // =========================
-    const isDataRow = (r) => toNum(r[1]) > 0   // 只看 B 欄（對照級距）
-    const rowToObj = (r) => ({
-      base: toNum(r[1]),
-      company: {
-        labor: toNum(r[2]),
-        health: toNum(r[3]),
-        extra: toNum(r[4]),
-        pension6: toNum(r[5]),
-        total: toNum(r[6]),
-      },
-      employee: {
-        grade: toNum(r[7]),
-        labor: toNum(r[8]),
-        health: toNum(r[9]),
-        total: toNum(r[10]),
-      },
-      note: String(r[11] || '').replace(/\r/g, '').trim(),
-    })
+      // =========================
+      // 試算表資料→物件
+      // =========================
+      const isDataRow = r => toNum(r[1]) > 0; // 只看 B 欄（對照級距）
+      const rowToObj = r => ({
+        base: toNum(r[1]),
+        company: {
+          labor: toNum(r[2]),
+          health: toNum(r[3]),
+          extra: toNum(r[4]),
+          pension6: toNum(r[5]),
+          total: toNum(r[6]),
+        },
+        employee: {
+          grade: toNum(r[7]),
+          labor: toNum(r[8]),
+          health: toNum(r[9]),
+          total: toNum(r[10]),
+        },
+        note: String(r[11] || "")
+          .replace(/\r/g, "")
+          .trim(),
+      });
 
-    // =========================
-    // 查表：級距 ceiling + 區間
-    // =========================
-    const fmtInt = (n) => Number(n).toLocaleString('zh-TW')
-    function makeBaseCeilLookup(byBase) {
-      const bases = Object.keys(byBase).map(Number).sort((a, b) => a - b)
-      return function lookup(input) {
-        const x = Math.max(1, Math.floor(Number(input) || 0))
-        // 找第一個 >= x
-        let lo = 0, hi = bases.length - 1, idx = -1
-        while (lo <= hi) {
-          const mid = (lo + hi) >> 1
-          if (x <= bases[mid]) { idx = mid; hi = mid - 1 } else { lo = mid + 1 }
-        }
-        if (idx === -1) {
-          const last = bases[bases.length - 1]
+      // =========================
+      // 查表：級距 ceiling + 區間
+      // =========================
+      const fmtInt = n => Number(n).toLocaleString("zh-TW");
+      function makeBaseCeilLookup(byBase) {
+        const bases = Object.keys(byBase)
+          .map(Number)
+          .sort((a, b) => a - b);
+        return function lookup(input) {
+          const x = Math.max(1, Math.floor(Number(input) || 0));
+          // 找第一個 >= x
+          let lo = 0,
+            hi = bases.length - 1,
+            idx = -1;
+          while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            if (x <= bases[mid]) {
+              idx = mid;
+              hi = mid - 1;
+            } else {
+              lo = mid + 1;
+            }
+          }
+          if (idx === -1) {
+            const last = bases[bases.length - 1];
+            return {
+              base: last,
+              rangeMin: last + 1,
+              rangeMax: x,
+              rangeLabel: `${fmtInt(last + 1)} ~ ${fmtInt(x)}`,
+              item: byBase[last],
+              capped: true,
+            };
+          }
+          const base = bases[idx];
+          const prev = idx === 0 ? 0 : bases[idx - 1];
+          const rangeMin = prev + 1;
           return {
-            base: last,
-            rangeMin: last + 1,
-            rangeMax: x,
-            rangeLabel: `${fmtInt(last + 1)} ~ ${fmtInt(x)}`,
-            item: byBase[last],
-            capped: true,
-          }
-        }
-        const base = bases[idx]
-        const prev = idx === 0 ? 0 : bases[idx - 1]
-        const rangeMin = prev + 1
-        return {
-          base,
-          rangeMin,
-          rangeMax: base,
-          rangeLabel: `${fmtInt(rangeMin)} ~ ${fmtInt(base)}`,
-          item: byBase[base],
-          capped: false,
-        }
+            base,
+            rangeMin,
+            rangeMax: base,
+            rangeLabel: `${fmtInt(rangeMin)} ~ ${fmtInt(base)}`,
+            item: byBase[base],
+            capped: false,
+          };
+        };
       }
-    }
 
-    // =========================
-    // 試算表服務（抓→解→轉→建索引→查表）
-    // =========================
-    async function loadSheet(editUrl) {
-      const csvUrl = getCsvUrl(editUrl)
-      const res = await fetch(csvUrl)
-      const csvText = await res.text()
-      const { data: rows } = Papa.parse(csvText, { skipEmptyLines: true })
-      const items = rows.filter(isDataRow).map(rowToObj)
-      const byBase = Object.fromEntries(items.map(it => [it.base, it]))
-      const lookupByBase = makeBaseCeilLookup(byBase)
-      return { items, byBase, lookupByBase }
-    }
+      // =========================
+      // 試算表服務（抓→解→轉→建索引→查表）
+      // =========================
+      async function loadSheet(editUrl) {
+        const csvUrl = getCsvUrl(editUrl);
+        const res = await fetch(csvUrl);
+        const csvText = await res.text();
+        const { data: rows } = Papa.parse(csvText, { skipEmptyLines: true });
+        const items = rows.filter(isDataRow).map(rowToObj);
+        const byBase = Object.fromEntries(items.map(it => [it.base, it]));
+        const lookupByBase = makeBaseCeilLookup(byBase);
+        return { items, byBase, lookupByBase };
+      }
 
-    // =========================
-    // Vue App
-    // =========================
-    createApp({
-      setup() {
-        // state
-        const salary = ref('')          // 使用者輸入薪資（空字串 → 顯示全 0）
-        const healthPerson = ref(1)     // 健保投保對象（1~4）
-        const loading = ref(true)
-        const error = ref(null)
-        const captureEl = ref(null)
-
-        // data from sheet
-        const items = ref([])
-        const byBase = ref({})
-        const lookup = ref(null)
-
-        // clamp healthPerson 介於 1~4
-        watchEffect(() => {
-          const n = Number(healthPerson.value) || 1
-          healthPerson.value = Math.min(4, Math.max(1, n))
-        })
-
-        // selection（空輸入 → ZERO_SELECTION）
-        const selection = computed(() => {
-          const v = salary.value
-          const isEmpty = (v === '' || v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)))
-          if (isEmpty || !lookup.value) return ZERO_SELECTION
-          const num = Number(v)
-          if (!Number.isFinite(num) && num !== 0) return ZERO_SELECTION
-          return lookup.value(num)
-        })
-        const row = computed(() => selection.value.item)
-        const rangeLabel = computed(() => selection.value.rangeLabel)
-
-        // 拆出常用欄位（避免模板裡做 ?.）
-        const employeeLabor = computed(() => row.value?.employee?.labor ?? 0)
-        const employeeHealth = computed(() => row.value?.employee?.health ?? 0)
-        const companyLabor = computed(() => row.value?.company?.labor ?? 0)
-        const companyHealth = computed(() => row.value?.company?.health ?? 0)
-        const companyPension = computed(() => row.value?.company?.pension6 ?? 0)
-        const companyTotal = computed(() => row.value?.company?.total ?? 0)
-
-        // 受 healthPerson 影響的欄位
-        const employeeHealthAdj = computed(() => employeeHealth.value * (Number(healthPerson.value) || 1))
-        const employeeTotalAdj = computed(() => {
-          const hp = Number(healthPerson.value) || 1
-          return (employeeLabor.value) + (employeeHealth.value * hp)
-        })
-
-        // 底部總結
-        const salaryNum = computed(() => Number(salary.value) || 0)
-        const takeHome = computed(() => salaryNum.value - employeeTotalAdj.value)
-        const employerPay = computed(() => salaryNum.value + companyTotal.value)
-
-        // lifecycle
-        onMounted(async () => {
-          try {
-            const data = await loadSheet(EDIT_URL)
-            items.value = data.items
-            byBase.value = data.byBase
-            lookup.value = data.lookupByBase
-          } catch (e) {
-            error.value = e?.message || String(e)
-            console.error(e)
-          } finally {
-            loading.value = false
-          }
-        })
-
-        // export image
-        const downloadImage = async () => {
-          if (!captureEl.value) return
-          // 等字型/圖片就緒，避免偏移
-          try { await document.fonts?.ready } catch { }
-          const imgs = Array.from(captureEl.value.querySelectorAll('img'))
-          await Promise.all(imgs.map(img => img.complete ? 0 : new Promise(r => (img.onload = img.onerror = r))))
-          const canvas = await html2canvas(captureEl.value, {
-            backgroundColor: null, useCORS: true, scale: 2
-          })
-          const a = document.createElement('a')
-          a.href = canvas.toDataURL('image/png')
-          a.download = '勞健保計算機.png'
-          a.click()
-        }
-
-        return {
+      // =========================
+      // Vue App
+      // =========================
+      createApp({
+        setup() {
           // state
-          salary, healthPerson, loading, error,
-          // selection / row
-          rangeLabel, row,
-          // 拆出欄位
-          employeeLabor, companyLabor, companyHealth, companyPension, companyTotal,
-          // 調整後與總結
-          employeeHealthAdj, employeeTotalAdj, takeHome, employerPay,
-          // utils / dom
-          formatMoney, captureEl, downloadImage
-        }
-      }
-    }).mount('#app')
-  </script>
-</body>
+          const salary = ref(""); // 使用者輸入薪資（空字串 → 顯示全 0）
+          const healthPerson = ref(1); // 健保投保對象（1~4）
+          const loading = ref(true);
+          const error = ref(null);
+          const captureEl = ref(null);
 
+          // data from sheet
+          const items = ref([]);
+          const byBase = ref({});
+          const lookup = ref(null);
+
+          // clamp healthPerson 介於 1~4
+          watchEffect(() => {
+            const n = Number(healthPerson.value) || 1;
+            healthPerson.value = Math.min(4, Math.max(1, n));
+          });
+
+          // selection（空輸入 → ZERO_SELECTION）
+          const selection = computed(() => {
+            const v = salary.value;
+            const isEmpty =
+              v === "" ||
+              v === null ||
+              v === undefined ||
+              (typeof v === "number" && Number.isNaN(v));
+            if (isEmpty || !lookup.value) return ZERO_SELECTION;
+            const num = Number(v);
+            if (!Number.isFinite(num) && num !== 0) return ZERO_SELECTION;
+            return lookup.value(num);
+          });
+          const row = computed(() => selection.value.item);
+          const rangeLabel = computed(() => selection.value.rangeLabel);
+
+          // 拆出常用欄位（避免模板裡做 ?.）
+          const employeeLabor = computed(() => row.value?.employee?.labor ?? 0);
+          const employeeHealth = computed(
+            () => row.value?.employee?.health ?? 0
+          );
+          const companyLabor = computed(() => row.value?.company?.labor ?? 0);
+          const companyHealth = computed(() => row.value?.company?.health ?? 0);
+          const companyPension = computed(
+            () => row.value?.company?.pension6 ?? 0
+          );
+          const companyTotal = computed(() => row.value?.company?.total ?? 0);
+
+          // 受 healthPerson 影響的欄位
+          const employeeHealthAdj = computed(
+            () => employeeHealth.value * (Number(healthPerson.value) || 1)
+          );
+          const employeeTotalAdj = computed(() => {
+            const hp = Number(healthPerson.value) || 1;
+            return employeeLabor.value + employeeHealth.value * hp;
+          });
+
+          // 底部總結
+          const salaryNum = computed(() => Number(salary.value) || 0);
+          const takeHome = computed(
+            () => salaryNum.value - employeeTotalAdj.value
+          );
+          const employerPay = computed(
+            () => salaryNum.value + companyTotal.value
+          );
+
+          // lifecycle
+          onMounted(async () => {
+            try {
+              const data = await loadSheet(EDIT_URL);
+              items.value = data.items;
+              byBase.value = data.byBase;
+              lookup.value = data.lookupByBase;
+            } catch (e) {
+              error.value = e?.message || String(e);
+              console.error(e);
+            } finally {
+              loading.value = false;
+            }
+          });
+
+          // export image
+          const downloadImage = async () => {
+            if (!captureEl.value) return;
+            // 等字型/圖片就緒，避免偏移
+            try {
+              await document.fonts?.ready;
+            } catch {}
+            const imgs = Array.from(captureEl.value.querySelectorAll("img"));
+            await Promise.all(
+              imgs.map(img =>
+                img.complete
+                  ? 0
+                  : new Promise(r => (img.onload = img.onerror = r))
+              )
+            );
+            const canvas = await html2canvas(captureEl.value, {
+              backgroundColor: null,
+              useCORS: true,
+              scale: 2,
+            });
+            const a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "勞健保計算機.png";
+            a.click();
+          };
+
+          return {
+            // state
+            salary,
+            healthPerson,
+            loading,
+            error,
+            // selection / row
+            rangeLabel,
+            row,
+            // 拆出欄位
+            employeeLabor,
+            companyLabor,
+            companyHealth,
+            companyPension,
+            companyTotal,
+            // 調整後與總結
+            employeeHealthAdj,
+            employeeTotalAdj,
+            takeHome,
+            employerPay,
+            // utils / dom
+            formatMoney,
+            captureEl,
+            downloadImage,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
 </html>

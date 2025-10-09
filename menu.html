@@ -1,104 +1,126 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>右下角浮動選單（純 HTML + CSS）</title>
-<style>
-  :root{
-    --fab-size: 40px;
-    --fab-gap: 12px;
-    --fab-bg: #FEDC80;   /* 近似 amber-300 */
-    --fab-bg-hover:#FBBF24; /* hover 色 */
-    --fab-radius: 8px;
-    --fab-shadow: 0 6px 16px rgba(0,0,0,.40);
-    --fab-icon: #334155; /* 深石板色 */
-  }
-  
-  /* 容器固定在左側中下方 */
-  .fab-menu{
-    position: fixed;
-    left: 0;
-    bottom: 120px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--fab-gap);
-    z-index: 9999;
-  }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light only" />
+    <meta name="darkreader-lock" />
+    <title>右下角浮動選單（純 HTML + CSS）</title>
+    <style>
+      :root {
+        --fab-size: 40px;
+        --fab-gap: 12px;
+        --fab-bg: #fedc80; /* 近似 amber-300 */
+        --fab-bg-hover: #fbbf24; /* hover 色 */
+        --fab-radius: 8px;
+        --fab-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        --fab-icon: #334155; /* 深石板色 */
+      }
 
-  /* 共用樣式：讓 <a> 也能套用 */
-  .fab-btn{
-    width: var(--fab-size);
-    height: var(--fab-size);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--fab-bg);
-    border-radius: var(--fab-radius);
-    box-shadow: var(--fab-shadow);
-    cursor: pointer;
-    transition: background .2s ease, transform .1s ease;
-    text-decoration: none;
-    padding: 10px;
-  }
+      /* 容器固定在左側中下方 */
+      .fab-menu {
+        position: fixed;
+        left: 0;
+        bottom: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: var(--fab-gap);
+        z-index: 9999;
+      }
 
-  .fab-btn:hover{ background: var(--fab-bg-hover); }
-  .fab-btn:active{ transform: translateY(1px); }
+      /* 共用樣式：讓 <a> 也能套用 */
+      .fab-btn {
+        width: var(--fab-size);
+        height: var(--fab-size);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--fab-bg);
+        border-radius: var(--fab-radius);
+        box-shadow: var(--fab-shadow);
+        cursor: pointer;
+        transition: background 0.2s ease, transform 0.1s ease;
+        text-decoration: none;
+        padding: 10px;
+      }
 
-  /* 圖片尺寸控制 */
-  .fab-btn img {
-    object-fit: contain;
-    pointer-events: none;
-  }
+      .fab-btn:hover {
+        background: var(--fab-bg-hover);
+      }
+      .fab-btn:active {
+        transform: translateY(1px);
+      }
 
-  /* 提示文字 */
-  .fab-btn[data-tip] {
-    position: relative;
-  }
+      /* 圖片尺寸控制 */
+      .fab-btn img {
+        object-fit: contain;
+        pointer-events: none;
+      }
 
-  .fab-btn[data-tip]::after {
-    content: attr(data-tip);
-    position: absolute;
-    right: calc(100% + 10px);
-    top: 50%;
-    transform: translateY(-50%);
-    white-space: nowrap;
-    font: 12px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial;
-    color: #475569;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 6px 8px;
-    box-shadow: 0 6px 16px rgba(0,0,0,.1);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .15s ease;
-  }
+      /* 提示文字 */
+      .fab-btn[data-tip] {
+        position: relative;
+      }
 
-  .fab-btn:hover::after {
-    opacity: 1;
-  }
+      .fab-btn[data-tip]::after {
+        content: attr(data-tip);
+        position: absolute;
+        right: calc(100% + 10px);
+        top: 50%;
+        transform: translateY(-50%);
+        white-space: nowrap;
+        font: 12px/1.2 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans",
+          Arial;
+        color: #475569;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px 8px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease;
+      }
 
-  @media (max-width: 768px) {
-    .fab-menu { display: none; }
-  }
-</style>
-</head>
-<body>
+      .fab-btn:hover::after {
+        opacity: 1;
+      }
 
-<nav class="fab-menu" aria-label="快速動作">
-  <a href="/finance.html" class="fab-btn" data-tip="收支紀錄" aria-label="收支紀錄">
-    <img src="./images/insurance.svg" alt="收支紀錄">
-  </a>
+      @media (max-width: 768px) {
+        .fab-menu {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="fab-menu" aria-label="快速動作">
+      <a
+        href="/finance.html"
+        class="fab-btn"
+        data-tip="收支紀錄"
+        aria-label="收支紀錄"
+      >
+        <img src="./images/insurance.svg" alt="收支紀錄" />
+      </a>
 
-  <a href="/house.html" class="fab-btn" data-tip="房屋資產" aria-label="房屋資產">
-    <img src="./images/rent.svg" alt="房屋資產">
-  </a>
+      <a
+        href="/house.html"
+        class="fab-btn"
+        data-tip="房屋資產"
+        aria-label="房屋資產"
+      >
+        <img src="./images/rent.svg" alt="房屋資產" />
+      </a>
 
-  <a href="/calculator.html" class="fab-btn" data-tip="試算工具" aria-label="試算工具">
-    <img src="./images/invoice.svg" alt="試算工具">
-  </a>
-</nav>
-
-</body>
+      <a
+        href="/calculator.html"
+        class="fab-btn"
+        data-tip="試算工具"
+        aria-label="試算工具"
+      >
+        <img src="./images/invoice.svg" alt="試算工具" />
+      </a>
+    </nav>
+  </body>
 </html>
