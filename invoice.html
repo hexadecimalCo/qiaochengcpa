@@ -10,40 +10,6 @@
     tailwind.config = {
       darkMode: false
     }
-    (function () {
-  function detectForcedDark() {
-    const el = document.createElement('div');
-    el.style.cssText='position:fixed;left:-9999px;top:-9999px;background:#fff;color:#000';
-    document.documentElement.appendChild(el);
-    const cs = getComputedStyle(el);
-    const forced = !cs.backgroundColor.startsWith('rgb(255, 255, 255)') &&
-                  !cs.color.startsWith('rgb(0, 0, 0)');
-    el.remove();
-    return forced;
-  }
-  function counterInvert() {
-    if (document.documentElement.hasAttribute('data-force-light')) return;
-    document.documentElement.setAttribute('data-force-light','');
-    const style = document.createElement('style');
-    style.textContent = `
-      html[data-force-light] body { 
-        filter: invert(1) hue-rotate(180deg) !important;
-        background:#fff !important;
-      }
-      html[data-force-light] img,
-      html[data-force-light] video,
-      html[data-force-light] canvas,
-      html[data-force-light] svg { 
-        filter: invert(1) hue-rotate(180deg) !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-  const run = () => { if (detectForcedDark()) counterInvert(); };
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', run, { once:true });
-  } else { run(); }
-})();
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
