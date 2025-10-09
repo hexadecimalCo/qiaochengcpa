@@ -76,7 +76,7 @@
                   <label class="block text-sm text-slate-600 mb-1">收款金額（含稅額）</label>
                   <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="9" :value="inclusiveDisplay"
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="11" :value="inclusiveDisplay"
                       @input="onInclusiveInput" class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
                   </div>
                 </div>
@@ -115,7 +115,7 @@
                   <label class="block text-sm text-slate-600 mb-1">銷售額（未稅額）</label>
                   <div class="relative">
                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="9" :value="exclusiveDisplay"
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="11" :value="exclusiveDisplay"
                       @input="onExclusiveInput" class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
                   </div>
                 </div>
