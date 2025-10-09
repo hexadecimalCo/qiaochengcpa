@@ -388,9 +388,10 @@
         };
 
         const rentIncludeTax = (ll) => { // done
-          if (rent.value < 20000 || taxMode.value === 'tax_included') return Math.round(rent.value * ll.share / 100)
+          const calcRent = Math.round(rent.value * ll.share / 100)
+          if (calcRent < 20000 || taxMode.value === 'tax_included') return Math.round(calcRent)
 
-          return Math.round(rent.value / 0.8789 * ll.share / 100)
+          return Math.round(calcRent / 0.8789)
         }
         const rentWithholding = (ll) => { // done
           const calcRent = Math.round(rent.value * ll.share / 100)
