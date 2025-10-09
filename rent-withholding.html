@@ -41,7 +41,7 @@
             <div v-for="(ll, idx) in landlords" :key="ll.id">
               <div class="grid grid-cols-1  gap-3 items-end"
                 :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
-              landlords.length>=2 ? 'border border-2 md:border-0 border-[#C5C5C5] md:border-black p-4 md:border-0 md:p-0'  : ''">
+              landlords.length>=2 ? 'border border-2 md:border-0 border-[#F2F2F2] md:border-black p-4 md:border-0 md:p-0'  : ''">
                 <!-- 房東名稱（唯讀展示） -->
                 <div>
                   <label class="block text-sm text-slate-500 mb-1">房東</label>
@@ -233,7 +233,7 @@
               <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'local'">* 本國人應於次月 10 日前繳納繳款書。</p>
               <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'foreign'">* 外國人未待滿 183 天，應於給付 10 日內繳納繳款書。
               </p>
-              <div class="border-t-4 border-[#E9AC06] mt-4 mb-6" v-if="idx<landlords.length-1"></div>
+              <div class="border-t-2 border-[#E9AC06] mt-4 mb-6" v-if="idx<landlords.length-1"></div>
             </div>
             <div v-if="tab==='company'">
               <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
