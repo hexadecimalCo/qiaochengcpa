@@ -432,15 +432,6 @@
             maximumFractionDigits: 0,
           }).format(v);
         };
-
-        const rentIncludeTax = ll => {
-          // 租金含稅
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000 || taxMode.value === "tax_included")
-            return Math.floor(calcRent);
-
-          return Math.floor(Math.floor(rent.value / 0.8789) * ll.share / 100);
-        };
         const rentWithholding = ll => {
           // 租金扣繳
           const calcRent = Math.floor((rent.value * ll.share) / 100);
@@ -450,8 +441,9 @@
             withholdingRate.value = 10;
             return Math.floor(calcRent * 0.1);
           } else {
+            const rentIncludeTaxAmount = Math.floor(Math.floor(rent.value / 0.8789) * ll.share / 100);
             if (calcRent < 20000) return 0;
-            return Math.floor(rentIncludeTax(ll) * 0.1);
+            return Math.floor(rentIncludeTaxAmount * 0.1);
           }
         };
         const rentHealthInsurance = ll => {
@@ -462,9 +454,10 @@
             if (calcRent < 20000) return 0;
             return Math.floor(calcRent * 0.0211);
           } else {
-            if (Math.floor(((calcRent / 0.8789) * ll.share) / 100) < 20000)
+            const rentIncludeTaxAmount = Math.floor(Math.floor(rent.value / 0.8789) * ll.share / 100);
+            if (rentIncludeTaxAmount < 20000)
               return 0;
-            return Math.floor(rentIncludeTax(ll) * 0.0211);
+            return Math.floor(rentIncludeTaxAmount * 0.0211);
           }
         };
         const rentTotal = ll => {
@@ -480,6 +473,14 @@
             return calcRent - rentTotal(ll);
           }
           return calcRent;
+        };
+        const rentIncludeTax = ll => {
+          // 租金含稅
+          const calcRent = Math.floor((rent.value * ll.share) / 100);
+          if (calcRent < 20000 || taxMode.value === "tax_included")
+            return Math.floor(calcRent);
+
+          return rentExcludeTax(ll) + rentWithholding(ll) + rentHealthInsurance(ll);
         };
 
         return {
