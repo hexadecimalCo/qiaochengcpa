@@ -7,18 +7,34 @@
     <meta name="darkreader-lock" />
     <meta name="theme-color" content="#ffffff" />
     <title>發票計算機</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
     <script>
       tailwind.config = {
         darkMode: false,
       };
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
       [v-cloak] {
         display: none;
+      }
+  
+      :root {
+        color-scheme: light !important;
+      }
+  
+      html,
+      body {
+        background-color: white !important;
+        -webkit-filter: none !important;
+        filter: none !important;
+      }
+  
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background: #fff !important;
+        }
       }
     </style>
   </head>
