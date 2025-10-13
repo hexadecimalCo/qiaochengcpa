@@ -238,7 +238,7 @@
                 </div>
                 <div
                   v-if="tab==='triple'"
-                  class="invoiceText absolute top-[104px] left-[183px] -translate-x-1/2 flex gap-[4px] leading-none select-none"
+                  class="invoiceText absolute top-[104px] left-[186px] -translate-x-1/2 flex gap-[4px] leading-none select-none"
                 >
                   <span
                     v-for="(ch, i) in taxIdSlots"
@@ -278,34 +278,32 @@
                 </div>
                 <div
                   class="invoiceText absolute top-[47px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none"
-                  :class="monthPairInChinese[0]==='十一' ? 'left-[383px]' : 'left-[390px]'"
+                  :class="monthPairInChinese[0]==='十一' ? 'left-[380px]' : 'left-[390px]'"
                 >
                   <span
-                    :class="monthPairInChinese[0]==='十一' ? 'pr-6' : 'pr-8'"
+                    :class="monthPairInChinese[0]==='十一' ? 'pr-6' : 'pr-9'"
                     >{{ monthPairInChinese[0] }}</span
                   >
                   <span>{{ monthPairInChinese[1] }}</span>
                 </div>
                 <div
-                  class="invoiceText absolute left-[405px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none"
+                  class="invoiceText absolute left-[445px] text-[#1758C8] font-bold text-[18px] opacity-80 select-none"
                   :class="tab==='triple' ? 'top-[100px] w-[160px]' : 'top-[98px] w-[170px]'"
                 >
                   <div class="relative w-full">
                     <span
-                      class="absolute -translate-x-1/2 w-[32px]"
-                      :class="tab==='triple' ? 'left-[16px]' : 'left-[16px]'"
-                      >{{ new Date().getFullYear()-1911 }}</span
-                    >
+                      class="absolute -translate-x-1/2 w-[32px] left-[16px]">
+                      {{ new Date().getFullYear()-1911 }}
+                    </span>
+                    <span
+                      class="absolute -translate-x-1/2 w-[24px] text-center left-[75px]">
+                      {{ new Date().getMonth() + 1 }}
+                    </span>
                     <span
                       class="absolute -translate-x-1/2 w-[24px] text-center"
-                      :class="tab==='triple' ? 'left-[75px]' : 'left-[80px]'"
-                      >{{ new Date().getMonth() + 1 }}</span
-                    >
-                    <span
-                      class="absolute -translate-x-1/2 w-[24px] text-center"
-                      :class="tab==='triple' ? 'right-[10px]' : 'right-[0px]'"
-                      >{{ new Date().getDate() }}</span
-                    >
+                      :class="tab==='triple' ? 'right-[10px]' : 'right-[18px]'">
+                      {{ new Date().getDate() }}
+                    </span>
                   </div>
                 </div>
                 <div
@@ -320,7 +318,7 @@
                   {{rocYearInChineseDigits}}
                 </div>
                 <div
-                  class="absolute top-[145px] left-[14px] font-bold text-[18px] opacity-80 border-t border-[#1758C8] border-4 select-none w-[680px]"
+                  class="absolute top-[145px] left-[14px] font-bold text-[18px] opacity-80 border-t border-[#1758C8] border-4 select-none w-[780px]"
                 ></div>
                 <div
                   class="invoiceText absolute left-[87px] flex justify-end gap-[20px] leading-none"
@@ -413,14 +411,14 @@
 
           const POS = {
             triple: {
-              應稅: "bottom-[90px] left-[25%]",
-              零稅率: "bottom-[90px] left-[35%]",
-              免稅: "bottom-[90px] left-[45%]",
+              應稅: "bottom-[90px] left-[215px]",
+              零稅率: "bottom-[90px] left-[290px]",
+              免稅: "bottom-[90px] left-[355px]",
             },
             double: {
               應稅: "bottom-[50px] left-[33%]",
-              零稅率: "bottom-[50px] left-[50%]",
-              免稅: "bottom-[50px] left-[65%]",
+              零稅率: "bottom-[50px] left-[390px]",
+              免稅: "bottom-[50px] left-[510px]",
             },
           };
           const MAX_LEN = 9;
