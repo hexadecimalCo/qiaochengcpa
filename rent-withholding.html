@@ -443,43 +443,43 @@
         };
         const rentWithholding = ll => {
           // 租金扣繳
-          const calcRent = Math.round((rent.value * ll.share) / 100);
+          const calcRent = Math.floor((rent.value * ll.share) / 100);
           if (calcRent < 20000) return 0;
           if (taxMode.value === "tax_included") {
             if (calcRent * 0.1 <= 2000) return 0;
             withholdingRate.value = 10;
-            return Math.round(calcRent * 0.1);
+            return Math.floor(calcRent * 0.1);
           } else {
             if (calcRent < 20000) return 0;
-            return Math.round(
-              Math.round(((calcRent / 0.8789) * ll.share) / 100) * 0.1
+            return Math.floor(
+              Math.floor(((calcRent / 0.8789) * ll.share) / 100) * 0.1
             );
           }
         };
         const rentHealthInsurance = ll => {
           // 二代健保
-          const calcRent = Math.round((rent.value * ll.share) / 100);
+          const calcRent = Math.floor((rent.value * ll.share) / 100);
           if (calcRent < 20000) return 0;
           if (taxMode.value === "tax_included") {
             if (calcRent < 20000) return 0;
-            return Math.round(calcRent * 0.0211);
+            return Math.floor(calcRent * 0.0211);
           } else {
-            if (Math.round(((calcRent / 0.8789) * ll.share) / 100) < 20000)
+            if (Math.floor(((calcRent / 0.8789) * ll.share) / 100) < 20000)
               return 0;
-            return Math.round(
-              Math.round(((calcRent / 0.8789) * ll.share) / 100) * 0.0211
+            return Math.floor(
+              Math.floor(((calcRent / 0.8789) * ll.share) / 100) * 0.0211
             );
           }
         };
         const rentTotal = ll => {
-          const calcRent = Math.round((rent.value * ll.share) / 100);
+          const calcRent = Math.floor((rent.value * ll.share) / 100);
           if (calcRent < 20000) return 0;
           return rentHealthInsurance(ll) + rentWithholding(ll);
         };
         const rentExcludeTax = ll => {
           // 租金未稅
-          const calcRent = Math.round((rent.value * ll.share) / 100);
-          if (calcRent < 20000) return Math.round(calcRent);
+          const calcRent = Math.floor((rent.value * ll.share) / 100);
+          if (calcRent < 20000) return Math.floor(calcRent);
           if (taxMode.value === "tax_included") {
             return calcRent - rentTotal(ll);
           }
