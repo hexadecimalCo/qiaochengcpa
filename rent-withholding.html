@@ -451,9 +451,7 @@
             return Math.floor(calcRent * 0.1);
           } else {
             if (calcRent < 20000) return 0;
-            return Math.floor(
-              Math.floor(((calcRent / 0.8789) * ll.share) / 100) * 0.1
-            );
+            return Math.floor(rentIncludeTax(ll) * 0.1);
           }
         };
         const rentHealthInsurance = ll => {
@@ -466,9 +464,7 @@
           } else {
             if (Math.floor(((calcRent / 0.8789) * ll.share) / 100) < 20000)
               return 0;
-            return Math.floor(
-              Math.floor(((calcRent / 0.8789) * ll.share) / 100) * 0.0211
-            );
+            return Math.floor(rentIncludeTax(ll) * 0.0211);
           }
         };
         const rentTotal = ll => {
