@@ -1,512 +1,688 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="color-scheme" content="light only" />
+    <meta name="darkreader-lock" />
+    <title>租金分攤試算（Vue CDN）</title>
+    <script>
+      tailwind.config = {
+        darkMode: false,
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      [v-cloak] {
+        display: none;
+      }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <meta name="theme-color" content="#ffffff" />
-  <meta name="color-scheme" content="light only" />
-  <meta name="darkreader-lock" />
-  <title>租金分攤試算（Vue CDN）</title>
-  <script>
-    tailwind.config = {
-      darkMode: false,
-    };
-  </script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    [v-cloak] {
-      display: none;
-    }
-
-    :root {
-      color-scheme: light !important;
-    }
-
-    html,
-    body {
-      background-color: white !important;
-      -webkit-filter: none !important;
-      filter: none !important;
-    }
-
-    @media (prefers-color-scheme: dark) {
+      :root {
+        color-scheme: light !important;
+      }
 
       html,
       body {
-        background: #fff !important;
+        background-color: white !important;
+        -webkit-filter: none !important;
+        filter: none !important;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
-    <div class="bg-white border border border-slate-200 shadow-sm px-[14px] py-5 mx-2 md:mx-0 md:p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- 左側表單 -->
-        <section>
-          <h2 class="text-xl font-semibold mb-4">房東</h2>
+      @media (prefers-color-scheme: dark) {
+        html,
+        body {
+          background: #fff !important;
+        }
+      }
+    </style>
+  </head>
 
-          <!-- 分頁 -->
-          <div class="flex border-b border-slate-200">
-            <button class="flex-1 px-6 py-3 text-center" :class="tab==='person'
+  <body>
+    <div id="app" v-cloak class="max-w-[1320px] mx-auto mt-6">
+      <div
+        class="bg-white border border border-slate-200 shadow-sm px-[14px] py-5 mx-2 md:mx-0 md:p-6"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- 左側表單 -->
+          <section>
+            <h2 class="text-xl font-semibold mb-4">房東</h2>
+
+            <!-- 分頁 -->
+            <div class="flex border-b border-slate-200">
+              <button
+                class="flex-1 px-6 py-3 text-center"
+                :class="tab==='person'
                 ? 'bg-[#FEDC80] text-slate-900 border-b-2 border-amber-500 font-medium'
-                : 'bg-[#F9FAFB] text-slate-500 border-b-2 hover:bg-slate-50'" @click="switchTab('person')">
-              個人
-            </button>
-            <button class="flex-1 px-6 py-3 text-center" :class="tab==='company'
+                : 'bg-[#F9FAFB] text-slate-500 border-b-2 hover:bg-slate-50'"
+                @click="switchTab('person')"
+              >
+                個人
+              </button>
+              <button
+                class="flex-1 px-6 py-3 text-center"
+                :class="tab==='company'
                 ? 'bg-[#FEDC80] text-slate-900 border-b-2 border-amber-500 font-medium'
-                : 'bg-[#F9FAFB] text-slate-500 border-b-2 hover:bg-slate-50'" @click="switchTab('company')">
-              公司
-            </button>
-          </div>
+                : 'bg-[#F9FAFB] text-slate-500 border-b-2 hover:bg-slate-50'"
+                @click="switchTab('company')"
+              >
+                公司
+              </button>
+            </div>
 
-          <!-- 房東列 -->
-          <div class="space-y-4 mt-4" v-if="tab==='person'">
-            <div v-for="(ll, idx) in landlords" :key="ll.id">
-              <div class="grid grid-cols-1 gap-3 items-end"
-                :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
-              landlords.length>=2 ? 'border border-2 md:border-0 border-[#F2F2F2] md:border-black p-4 md:border-0 md:p-0'  : ''">
-                <!-- 房東名稱（唯讀展示） -->
-                <div>
-                  <label class="block text-sm text-slate-500 mb-1">房東</label>
-                  <input class="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-[#9CA3AF]"
-                    :value="`房東${idx+1}`" disabled />
-                </div>
+            <!-- 房東列 -->
+            <div class="space-y-4 mt-4" v-if="tab==='person'">
+              <div v-for="(ll, idx) in landlords" :key="ll.id">
+                <div
+                  class="grid grid-cols-1 gap-3 items-end"
+                  :class="idx === 0 ? 'sm:[grid-template-columns:30%_30%_1fr_auto]': 'sm:[grid-template-columns:28%_28%_28%_auto]',
+              landlords.length>=2 ? 'border border-2 md:border-0 border-[#F2F2F2] md:border-black p-4 md:border-0 md:p-0'  : ''"
+                >
+                  <!-- 房東名稱（唯讀展示） -->
+                  <div>
+                    <label class="block text-sm text-slate-500 mb-1"
+                      >房東</label
+                    >
+                    <input
+                      class="w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2 text-[#9CA3AF]"
+                      :value="`房東${idx+1}`"
+                      disabled
+                    />
+                  </div>
 
-                <!-- 身份 -->
-                <div>
-                  <label class="block text-sm text-slate-500 mb-1">身份</label>
-                  <div class="relative">
-                    <select v-model="ll.identity" disabled
-                      class="w-full rounded-lg border border-slate-200 px-3 py-2 appearance-none pr-8 bg-slate-100 text-[#9CA3AF]">
-                      <option value="local">本國人</option>
-                      <option value="foreign">外國人</option>
-                    </select>
-                    <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                      viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
-                        clip-rule="evenodd" />
-                    </svg>
+                  <!-- 身份 -->
+                  <div>
+                    <label class="block text-sm text-slate-500 mb-1"
+                      >身份</label
+                    >
+                    <div class="relative">
+                      <select
+                        v-model="ll.identity"
+                        disabled
+                        class="w-full rounded-lg border border-slate-200 px-3 py-2 appearance-none pr-8 bg-slate-100 text-[#9CA3AF]"
+                      >
+                        <option value="local">本國人</option>
+                        <option value="foreign">外國人</option>
+                      </select>
+                      <svg
+                        class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- 持有比例 -->
+                  <div>
+                    <label class="block text-sm text-slate-500 mb-1"
+                      >持有比例 (%)</label
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="1"
+                      v-model.number="ll.share"
+                      @input="onShareInput(idx, $event)"
+                      class="w-full rounded-lg border border-slate-200 px-3 py-2"
+                    />
+                  </div>
+
+                  <!-- 刪除 -->
+                  <div
+                    class="h-[42px] flex items-center justify-center lg:justify-start"
+                    v-if="idx>=1"
+                  >
+                    <button
+                      class="inline-flex items-center justify-center lg:w-9 lg:h-9 rounded-md border border-transparent"
+                      @click="removeLandlord(idx)"
+                      aria-label="刪除房東"
+                    >
+                      <img src="./images/round-box-cross.svg" alt="" />
+                      <span class="sm:hidden pl-2">刪除房東{{idx+1}}</span>
+                    </button>
                   </div>
                 </div>
+                <div class="flex mt-4" v-if="ll.identity ==='foreign'">
+                  <label
+                    class="inline-flex items-center gap-3 cursor-pointer select-none mr-4"
+                  >
+                    <input
+                      type="checkbox"
+                      v-model="ll.has183"
+                      class="peer sr-only"
+                    />
 
-                <!-- 持有比例 -->
-                <div>
-                  <label class="block text-sm text-slate-500 mb-1">持有比例 (%)</label>
-                  <input type="number" min="0" max="100" step="1" v-model.number="ll.share"
-                    @input="onShareInput(idx, $event)" class="w-full rounded-lg border border-slate-200 px-3 py-2" />
+                    <span
+                      class="grid place-items-center w-5 h-5 rounded-md border border-slate-400 bg-white transition peer-checked:bg-neutral-900 peer-checked:border-neutral-900 [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        class="w-4 h-4 text-white transition-opacity"
+                      >
+                        <path
+                          d="M5 13l4 4L19 7"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+
+                    <span class="text-[18px]">有待滿 183 天</span>
+                  </label>
+                  <label
+                    class="inline-flex items-center gap-3 cursor-pointer select-none"
+                  >
+                    <input
+                      type="checkbox"
+                      v-model="ll.hasNhi"
+                      class="peer sr-only"
+                    />
+                    <span
+                      class="grid place-items-center w-5 h-5 rounded-md border border-slate-400 bg-white transition peer-checked:bg-neutral-900 peer-checked:border-neutral-900 [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        class="w-4 h-4 text-white transition-opacity"
+                      >
+                        <path
+                          d="M5 13l4 4L19 7"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="3"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+
+                    <span class="text-[18px]">有投保健保</span>
+                  </label>
                 </div>
-
-                <!-- 刪除 -->
-                <div class="h-[42px] flex items-center justify-center lg:justify-start" v-if="idx>=1">
+              </div>
+              <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="col-span-12 sm:col-span-3">
                   <button
-                    class="inline-flex items-center justify-center lg:w-9 lg:h-9 rounded-md border border-transparent"
-                    @click="removeLandlord(idx)" aria-label="刪除房東">
-                    <img src="./images/round-box-cross.svg" alt="" />
-                    <span class="sm:hidden pl-2">刪除房東{{idx+1}}</span>
+                    class="px-3 py-2 rounded-lg border border border-slate-200 hover:bg-slate-50 flex items-center gap-2"
+                    @click="onAddLandlord(idx)"
+                  >
+                    <img
+                      src="./images/circle-plus.svg"
+                      alt="新增房東"
+                      class="w-4 h-4"
+                    />
+                    新增房東
                   </button>
                 </div>
               </div>
-              <div class="flex mt-4" v-if="ll.identity ==='foreign'">
-                <label class="inline-flex items-center gap-3 cursor-pointer select-none mr-4">
-                  <input type="checkbox" v-model="ll.has183" class="peer sr-only" />
 
-                  <span
-                    class="grid place-items-center w-5 h-5 rounded-md border border-slate-400 bg-white transition peer-checked:bg-neutral-900 peer-checked:border-neutral-900 [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
-                    <svg viewBox="0 0 24 24" class="w-4 h-4 text-white transition-opacity">
-                      <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    </svg>
-                  </span>
+              <!-- 每期租金 -->
+              <div class="mt-6">
+                <div>
+                  <label class="block text-sm text-slate-500 mb-1"
+                    >每期租金</label
+                  >
+                  <div class="relative">
+                    <span
+                      class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                      >NT$</span
+                    >
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      v-model.number="rent"
+                      class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2"
+                    />
+                  </div>
+                </div>
 
-                  <span class="text-[18px]">有待滿 183 天</span>
-                </label>
-                <label class="inline-flex items-center gap-3 cursor-pointer select-none">
-                  <input type="checkbox" v-model="ll.hasNhi" class="peer sr-only" />
-                  <span
-                    class="grid place-items-center w-5 h-5 rounded-md border border-slate-400 bg-white transition peer-checked:bg-neutral-900 peer-checked:border-neutral-900 [&>svg]:opacity-0 peer-checked:[&>svg]:opacity-100">
-                    <svg viewBox="0 0 24 24" class="w-4 h-4 text-white transition-opacity">
-                      <path d="M5 13l4 4L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    </svg>
-                  </span>
+                <div class="mt-6 flex items-end gap-6">
+                  <label
+                    class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto"
+                  >
+                    <input
+                      type="radio"
+                      class="hidden peer"
+                      value="tax_included"
+                      v-model="taxMode"
+                    />
+                    <span
+                      class="relative w-5 h-5 rounded-full border border-slate-300 peer-checked:border-amber-500 after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-amber-500 after:opacity-0 peer-checked:after:opacity-100"
+                    >
+                    </span>
+                    <span class="text-slate-700">租金含稅</span>
+                  </label>
 
-                  <span class="text-[18px]">有投保健保</span>
-                </label>
-              </div>
-            </div>
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="col-span-12 sm:col-span-3">
-                <button
-                  class="px-3 py-2 rounded-lg border border border-slate-200 hover:bg-slate-50 flex items-center gap-2"
-                  @click="onAddLandlord(idx)">
-                  <img src="./images/circle-plus.svg" alt="新增房東" class="w-4 h-4" />
-                  新增房東
-                </button>
-              </div>
-            </div>
-
-            <!-- 每期租金 -->
-            <div class="mt-6">
-              <div>
-                <label class="block text-sm text-slate-500 mb-1">每期租金</label>
-                <div class="relative">
-                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                  <input type="number" min="0" step="1" v-model.number="rent"
-                    class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
+                  <label
+                    class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto"
+                  >
+                    <input
+                      type="radio"
+                      class="hidden peer"
+                      value="tax_excluded"
+                      v-model="taxMode"
+                    />
+                    <span
+                      class="relative w-5 h-5 rounded-full border border-slate-300 peer-checked:border-amber-500 after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-amber-500 after:opacity-0 peer-checked:after:opacity-100"
+                    >
+                    </span>
+                    <span class="text-slate-700">租金未含稅</span>
+                  </label>
                 </div>
               </div>
-
-              <div class="mt-6 flex items-end gap-6">
-                <label class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto">
-                  <input type="radio" class="hidden peer" value="tax_included" v-model="taxMode" />
+            </div>
+            <div v-else>
+              <div class="mt-6">
+                <label class="block text-sm mb-2">每期租金</label>
+                <div class="relative">
                   <span
-                    class="relative w-5 h-5 rounded-full border border-slate-300 peer-checked:border-amber-500 after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-amber-500 after:opacity-0 peer-checked:after:opacity-100">
-                  </span>
-                  <span class="text-slate-700">租金含稅</span>
-                </label>
-
-                <label class="inline-flex items-center gap-2 cursor-pointer w-1/2 md:w-auto">
-                  <input type="radio" class="hidden peer" value="tax_excluded" v-model="taxMode" />
-                  <span
-                    class="relative w-5 h-5 rounded-full border border-slate-300 peer-checked:border-amber-500 after:content-[''] after:absolute after:inset-1 after:rounded-full after:bg-amber-500 after:opacity-0 peer-checked:after:opacity-100">
-                  </span>
-                  <span class="text-slate-700">租金未含稅</span>
-                </label>
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >NT$</span
+                  >
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    v-model.number="rent"
+                    class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div v-else>
-            <div class="mt-6">
-              <label class="block text-sm mb-2">每期租金</label>
-              <div class="relative">
-                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">NT$</span>
-                <input type="number" min="0" step="1" v-model.number="rent"
-                  class="w-full rounded-lg border border-slate-200 pl-12 pr-3 py-2" />
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
 
-        <div class="block w-full md:hidden border-t-4 border-[#E9AC06] mt-4"></div>
-        <!-- 右側結果 -->
-        <section>
-          <h2 class="text-[30px] text-center md:text-left md:text-xl font-semibold mb-4">
-            試算結果
-          </h2>
-          <div class="bg-[#F2F2F2] p-6">
-            <div v-if="tab==='person'" v-for="(ll, idx) in landlords" :key="ll.id" class="mb-4">
-              <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
-                房東{{ idx+1 }}： {{ identityLabel(ll) }}
-              </div>
-              <ul class="space-y-2">
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">房東實收租金(未稅)</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentExcludeTax(ll), false)
-                    }}</span>
-                </li>
-                <li class="flex justify-between items-start">
-                  <span class="inline-flex items-center gap-2 text-[#4C4C4C]">
-                    扣繳{{ withholdingRate }}%
-                    <div class="relative inline-block group">
-                      <img src="./images/info-circle.svg" alt="" class="w-4 h-4 cursor-pointer" />
-                      <!-- Tooltip -->
-                      <div
-                        class="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-[200px] px-3 py-2 rounded bg-[#FDB902] text-black text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-10">
-                        扣繳只是先預繳房東個人綜合所得稅，不是會損失的稅金。<br />
-                        會視房東個人綜所稅稅率退稅。<br />
-                        例如：如果房東不需繳個人綜合所得稅，10%
-                        就可以全額退回。
-                        <!-- 箭頭 -->
-                        <div class="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 rotate-45 bg-[#FDB902]"></div>
+          <div
+            class="block w-full md:hidden border-t-4 border-[#E9AC06] mt-4"
+          ></div>
+          <!-- 右側結果 -->
+          <section>
+            <h2
+              class="text-[30px] text-center md:text-left md:text-xl font-semibold mb-4"
+            >
+              試算結果
+            </h2>
+            <div class="bg-[#F2F2F2] p-6">
+              <div
+                v-if="tab==='person'"
+                v-for="(ll, idx) in landlords"
+                :key="ll.id"
+                class="mb-4"
+              >
+                <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
+                  房東{{ idx+1 }}： {{ identityLabel(ll) }}
+                </div>
+                <ul class="space-y-2">
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">房東實收租金(未稅)</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                      >{{ moneyFmt(rentExcludeTax(ll), false) }}</span
+                    >
+                  </li>
+                  <li class="flex justify-between items-start">
+                    <span class="inline-flex items-center gap-2 text-[#4C4C4C]">
+                      扣繳{{ withholdingRate }}%
+                      <div class="relative inline-block group">
+                        <img
+                          src="./images/info-circle.svg"
+                          alt=""
+                          class="w-4 h-4 cursor-pointer"
+                        />
+                        <!-- Tooltip -->
+                        <div
+                          class="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-[200px] px-3 py-2 rounded bg-[#FDB902] text-black text-xs leading-relaxed opacity-0 group-hover:opacity-100 transition pointer-events-none z-10"
+                        >
+                          扣繳只是先預繳房東個人綜合所得稅，不是會損失的稅金。<br />
+                          會視房東個人綜所稅稅率退稅。<br />
+                          例如：如果房東不需繳個人綜合所得稅，10%
+                          就可以全額退回。
+                          <!-- 箭頭 -->
+                          <div
+                            class="absolute top-1/2 -translate-y-1/2 -left-1 w-2 h-2 rotate-45 bg-[#FDB902]"
+                          ></div>
+                        </div>
                       </div>
-                    </div>
-                  </span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
-                    {{ moneyFmt(rentWithholding(ll), false) }}
-                  </span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">二代健保 2.11%</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
-                    {{ moneyFmt(rentHealthInsurance(ll), false) }}
-                  </span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">租扣二代總金額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">
-                    {{ moneyFmt(rentTotal(ll), false) }}
-                  </span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">實際申報租金(含稅)</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{ moneyFmt(rentIncludeTax(ll), false)
-                    }}</span>
-                </li>
-              </ul>
-              <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'local'">
-                * 本國人應於次月 10 日前繳納繳款書。
-              </p>
-              <p class="mt-2 text-xs text-[#4C4C4C]" v-if="ll.identity === 'foreign'">
-                * 外國人未待滿 183 天，應於給付 10 日內繳納繳款書。
-              </p>
-              <div class="border-t-2 border-[#E9AC06] mt-4 mb-6" v-if="idx<landlords.length-1"></div>
-            </div>
-            <div v-if="tab==='company'">
-              <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
-                若房東是公司，則應跟房東索取租金發票，發票總金額為<span class="text-[#C81717]">{{moneyFmt(rent, false)}}</span>元
+                    </span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                    >
+                      {{ moneyFmt(rentWithholding(ll), false) }}
+                    </span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">二代健保 2.11%</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                    >
+                      {{ moneyFmt(rentHealthInsurance(ll), false) }}
+                    </span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">租扣二代總金額</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                    >
+                      {{ moneyFmt(rentTotal(ll), false) }}
+                    </span>
+                  </li>
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">實際申報租金(含稅)</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                      >{{ moneyFmt(rentIncludeTax(ll), false) }}</span
+                    >
+                  </li>
+                </ul>
+                <p
+                  class="mt-2 text-xs text-[#4C4C4C]"
+                  v-if="ll.identity === 'local'"
+                >
+                  * 本國人應於次月 10 日前繳納繳款書。
+                </p>
+                <p
+                  class="mt-2 text-xs text-[#4C4C4C]"
+                  v-if="ll.identity === 'foreign'"
+                >
+                  * 外國人未待滿 183 天，應於給付 10 日內繳納繳款書。
+                </p>
+                <div
+                  class="border-t-2 border-[#E9AC06] mt-4 mb-6"
+                  v-if="idx<landlords.length-1"
+                ></div>
               </div>
-              <ul class="space-y-2">
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">銷售額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05,
-                    false)}}</span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">稅額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent / 1.05 * 0.05,
-                    false)}}</span>
-                </li>
-                <li class="flex justify-between">
-                  <span class="text-[#4C4C4C]">總金額</span>
-                  <span class="text-[#C81717] font-semibold text-xl md:text-base">{{moneyFmt(rent, false)}}</span>
-                </li>
-              </ul>
+              <div v-if="tab==='company'">
+                <div class="mb-3 text-xl font-bold text-[#4C4C4C]">
+                  若房東是公司，則應跟房東索取租金發票，發票總金額為<span
+                    class="text-[#C81717]"
+                    >{{moneyFmt(rent, false)}}</span
+                  >元
+                </div>
+                <ul class="space-y-2">
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">銷售額</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                      >{{moneyFmt(rent / 1.05, false)}}</span
+                    >
+                  </li>
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">稅額</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                      >{{moneyFmt(rent / 1.05 * 0.05, false)}}</span
+                    >
+                  </li>
+                  <li class="flex justify-between">
+                    <span class="text-[#4C4C4C]">總金額</span>
+                    <span
+                      class="text-[#C81717] font-semibold text-xl md:text-base"
+                      >{{moneyFmt(rent, false)}}</span
+                    >
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-        </section>
-        <div v-if="alert.open" class="fixed inset-0 z-50 flex items-center justify-center">
-          <!-- 背景 -->
-          <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]" @click="closeAlert"></div>
+          </section>
+          <div
+            v-if="alert.open"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+          >
+            <!-- 背景 -->
+            <div
+              class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"
+              @click="closeAlert"
+            ></div>
 
-          <!-- 卡片 -->
-          <div class="relative bg-white shadow-xl w-[min(90vw,520px)] p-8 text-center">
-            <div class="mx-auto mb-6 flex items-center justify-center w-12 h-12 rounded-full bg-rose-100">
-              <img src="./images/alert.svg" alt="" class="w-6 h-6" />
+            <!-- 卡片 -->
+            <div
+              class="relative bg-white shadow-xl w-[min(90vw,520px)] p-8 text-center"
+            >
+              <div
+                class="mx-auto mb-6 flex items-center justify-center w-12 h-12 rounded-full bg-rose-100"
+              >
+                <img src="./images/alert.svg" alt="" class="w-6 h-6" />
+              </div>
+
+              <!-- 內容 -->
+              <div>
+                <p
+                  class="text-2xl font-semibold text-[#4C4C4C] leading-relaxed"
+                  v-html="alert.message"
+                ></p>
+
+                <span v-if="alert.tips" class="text-sm text-[#4C4C4C]"
+                  >{{alert.tips}}</span
+                >
+              </div>
+
+              <!-- 按鈕 -->
+              <button
+                ref="alertCloseBtn"
+                class="mt-8 inline-flex items-center justify-center px-8 py-3 bg-[#FDB902] hover:bg-amber-600 text-[#202020] font-medium shadow"
+                @click="closeAlert"
+              >
+                好的
+              </button>
             </div>
-
-            <!-- 內容 -->
-            <div>
-              <p class="text-2xl font-semibold text-[#4C4C4C] leading-relaxed" v-html="alert.message"></p>
-
-              <span v-if="alert.tips" class="text-sm text-[#4C4C4C]">{{alert.tips}}</span>
-            </div>
-
-            <!-- 按鈕 -->
-            <button ref="alertCloseBtn"
-              class="mt-8 inline-flex items-center justify-center px-8 py-3 bg-[#FDB902] hover:bg-amber-600 text-[#202020] font-medium shadow"
-              @click="closeAlert">
-              好的
-            </button>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script type="module">
-    import {
-      createApp,
-      ref,
-      computed,
-      nextTick,
-      watch,
-    } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+    <script type="module">
+      import {
+        createApp,
+        ref,
+        computed,
+        nextTick,
+        watch,
+      } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
-    createApp({
-      setup() {
-        const alertCloseBtn = ref(null);
-        const alert = ref({ open: false, message: "", tips: "" });
-        const tab = ref("person"); // person | company
-        const rent = ref(0);
-        const taxMode = ref("tax_included"); // tax_included | tax_excluded
-        const withholdingRate = ref(0);
-        const landlords = ref([
-          {
-            id: 1,
-            identity: "local",
-            share: 100,
-            has183: false,
-            hasNhi: false,
-          },
-        ]);
+      createApp({
+        setup() {
+          const alertCloseBtn = ref(null);
+          const alert = ref({ open: false, message: "", tips: "" });
+          const tab = ref("person"); // person | company
+          const rent = ref(0);
+          const taxMode = ref("tax_included"); // tax_included | tax_excluded
+          const withholdingRate = ref(0);
+          const landlords = ref([
+            {
+              id: 1,
+              identity: "local",
+              share: 100,
+              has183: false,
+              hasNhi: false,
+            },
+          ]);
 
-        const openAlert = (msg, tips = "") => {
-          alert.value.open = true;
-          alert.value.message =
-            msg || "請先設定所有房東的持有比例<br />才能再新增房東";
-          alert.value.tips = tips;
+          const openAlert = (msg, tips = "") => {
+            alert.value.open = true;
+            alert.value.message =
+              msg || "請先設定所有房東的持有比例<br />才能再新增房東";
+            alert.value.tips = tips;
 
-          // 把焦點從 input 移開，避免鍵盤還能持續輸入
-          nextTick(() => {
-            const ae = document.activeElement;
-            if (ae && typeof ae.blur === "function") ae.blur();
-            alertCloseBtn.value?.focus();
-          });
-        };
+            // 把焦點從 input 移開，避免鍵盤還能持續輸入
+            nextTick(() => {
+              const ae = document.activeElement;
+              if (ae && typeof ae.blur === "function") ae.blur();
+              alertCloseBtn.value?.focus();
+            });
+          };
 
-        watch(
-          () => alert.value.open,
-          isOpen => {
-            document.body.style.overflow = isOpen ? "hidden" : "";
-          }
-        );
-
-        const shareTotal = computed(() =>
-          landlords.value.reduce((sum, l) => sum + (Number(l.share) || 0), 0)
-        );
-
-        const onShareInput = (idx, e) => {
-          const val = Number(e?.target?.value) || 0;
-          const sumOthers = landlords.value.reduce(
-            (sum, l, i) => (i === idx ? sum : sum + (Number(l.share) || 0)),
-            0
+          watch(
+            () => alert.value.open,
+            isOpen => {
+              document.body.style.overflow = isOpen ? "hidden" : "";
+            }
           );
-          const allowed = Math.max(0, 100 - sumOthers);
 
-          if (val > allowed) {
-            landlords.value[idx].share = allowed;
-            openAlert(
-              `持有比例超過 100%`,
-              `請調整比例總合為 100% 才能算出正確數字`
+          const shareTotal = computed(() =>
+            landlords.value.reduce((sum, l) => sum + (Number(l.share) || 0), 0)
+          );
+
+          const onShareInput = (idx, e) => {
+            const val = Number(e?.target?.value) || 0;
+            const sumOthers = landlords.value.reduce(
+              (sum, l, i) => (i === idx ? sum : sum + (Number(l.share) || 0)),
+              0
             );
-            return;
-          }
-        };
+            const allowed = Math.max(0, 100 - sumOthers);
 
-        const closeAlert = () => {
-          alert.value.open = false;
-        };
+            if (val > allowed) {
+              landlords.value[idx].share = allowed;
+              openAlert(
+                `持有比例超過 100%`,
+                `請調整比例總合為 100% 才能算出正確數字`
+              );
+              return;
+            }
+          };
 
-        const switchTab = t => {
-          tab.value = t;
-          rent.value = 0;
-        };
+          const closeAlert = () => {
+            alert.value.open = false;
+          };
 
-        const onAddLandlord = () => {
-          const allSet = landlords.value.every(l => Number(l.share) > 0);
-          if (!allSet) {
-            openAlert();
-            return;
-          }
-          const nextId = Math.max(...landlords.value.map(l => l.id)) + 1;
-          landlords.value.push({
-            id: nextId,
-            identity: "local",
-            share: 0,
-            has183: false,
-            hasNhi: false,
-          });
-        };
+          const switchTab = t => {
+            tab.value = t;
+            rent.value = 0;
+          };
 
-        const removeLandlord = idx => {
-          if (landlords.value.length === 1) return;
-          landlords.value.splice(idx, 1);
-        };
+          const onAddLandlord = () => {
+            const allSet = landlords.value.every(l => Number(l.share) > 0);
+            if (!allSet) {
+              openAlert();
+              return;
+            }
+            const nextId = Math.max(...landlords.value.map(l => l.id)) + 1;
+            landlords.value.push({
+              id: nextId,
+              identity: "local",
+              share: 0,
+              has183: false,
+              hasNhi: false,
+            });
+          };
 
-        const identityLabel = ll => {
-          if (tab.value === "company") return "公司";
-          return ll.identity === "foreign" ? "外國人" : "本國人";
-        };
+          const removeLandlord = idx => {
+            if (landlords.value.length === 1) return;
+            landlords.value.splice(idx, 1);
+          };
 
-        const moneyFmt = (n, noSymbol = true) => {
-          const x = Number(n);
-          const v = Number.isFinite(x) ? x : 0;
+          const identityLabel = ll => {
+            if (tab.value === "company") return "公司";
+            return ll.identity === "foreign" ? "外國人" : "本國人";
+          };
 
-          if (noSymbol) {
-            // 不要NT
+          const moneyFmt = (n, noSymbol = true) => {
+            const x = Number(n);
+            const v = Number.isFinite(x) ? x : 0;
+
+            if (noSymbol) {
+              // 不要NT
+              return new Intl.NumberFormat("zh-TW", {
+                maximumFractionDigits: 0,
+                currency: "USD",
+                useGrouping: true,
+              }).format(v);
+            }
+
+            // 含 NT$ 幣別
             return new Intl.NumberFormat("zh-TW", {
+              style: "currency",
+              currency: "TWD",
               maximumFractionDigits: 0,
-              currency: "USD",
-              useGrouping: true,
             }).format(v);
-          }
-
-          // 含 NT$ 幣別
-          return new Intl.NumberFormat("zh-TW", {
-            style: "currency",
-            currency: "TWD",
-            maximumFractionDigits: 0,
-          }).format(v);
-        };
-        const rentWithholding = ll => {
-          // 租金扣繳
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000) return 0;
-          if (taxMode.value === "tax_included") {
-            if (calcRent * 0.1 <= 2000) return 0;
-            withholdingRate.value = 10;
-            return Math.floor(calcRent * 0.1);
-          } else {
-            const rentIncludeTaxAmount = Math.floor(Math.floor(rent.value / 0.8789) * ll.share / 100);
+          };
+          const rentWithholding = ll => {
+            // 租金扣繳
+            const calcRent = Math.floor((rent.value * ll.share) / 100);
             if (calcRent < 20000) return 0;
-            return Math.floor(rentIncludeTaxAmount * 0.1);
-          }
-        };
-        const rentHealthInsurance = ll => {
-          // 二代健保
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000) return 0;
-          if (taxMode.value === "tax_included") {
+            if (taxMode.value === "tax_included") {
+              if (calcRent * 0.1 <= 2000) return 0;
+              withholdingRate.value = 10;
+              return Math.floor(calcRent * 0.1);
+            } else {
+              const rentIncludeTaxAmount = Math.floor(
+                (Math.floor(rent.value / 0.8789) * ll.share) / 100
+              );
+              if (calcRent < 20000) return 0;
+              return Math.floor(rentIncludeTaxAmount * 0.1);
+            }
+          };
+          const rentHealthInsurance = ll => {
+            // 二代健保
+            const calcRent = Math.floor((rent.value * ll.share) / 100);
             if (calcRent < 20000) return 0;
-            return Math.floor(calcRent * 0.0211);
-          } else {
-            const rentIncludeTaxAmount = Math.floor(Math.floor(rent.value / 0.8789) * ll.share / 100);
-            if (rentIncludeTaxAmount < 20000)
-              return 0;
-            return Math.floor(rentIncludeTaxAmount * 0.0211);
-          }
-        };
-        const rentTotal = ll => {
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000) return 0;
-          return rentHealthInsurance(ll) + rentWithholding(ll);
-        };
-        const rentExcludeTax = ll => {
-          // 租金未稅
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000) return Math.floor(calcRent);
-          if (taxMode.value === "tax_included") {
-            return calcRent - rentTotal(ll);
-          }
-          return calcRent;
-        };
-        const rentIncludeTax = ll => {
-          // 租金含稅
-          const calcRent = Math.floor((rent.value * ll.share) / 100);
-          if (calcRent < 20000 || taxMode.value === "tax_included")
-            return Math.floor(calcRent);
+            if (taxMode.value === "tax_included") {
+              if (calcRent < 20000) return 0;
+              return Math.round(calcRent * 0.0211);
+            } else {
+              const rentIncludeTaxAmount = Math.floor(
+                (Math.floor(rent.value / 0.8789) * ll.share) / 100
+              );
+              if (rentIncludeTaxAmount < 20000) return 0;
+              return Math.round(rentIncludeTaxAmount * 0.0211);
+            }
+          };
+          const rentTotal = ll => {
+            const calcRent = Math.floor((rent.value * ll.share) / 100);
+            if (calcRent < 20000) return 0;
+            return rentHealthInsurance(ll) + rentWithholding(ll);
+          };
+          const rentExcludeTax = ll => {
+            // 租金未稅
+            const calcRent = Math.floor((rent.value * ll.share) / 100);
+            if (calcRent < 20000) return Math.floor(calcRent);
+            if (taxMode.value === "tax_included") {
+              return calcRent - rentTotal(ll);
+            }
+            return calcRent;
+          };
+          const rentIncludeTax = ll => {
+            // 租金含稅
+            const calcRent = Math.floor((rent.value * ll.share) / 100);
+            if (calcRent < 20000 || taxMode.value === "tax_included")
+              return Math.floor(calcRent);
 
-          return rentExcludeTax(ll) + rentWithholding(ll) + rentHealthInsurance(ll);
-        };
+            return (
+              rentExcludeTax(ll) + rentWithholding(ll) + rentHealthInsurance(ll)
+            );
+          };
 
-        return {
-          tab,
-          rent,
-          taxMode,
-          landlords,
-          withholdingRate,
-          alert,
-          openAlert,
-          closeAlert,
-          switchTab,
-          removeLandlord,
-          onAddLandlord,
-          identityLabel,
-          moneyFmt,
-          onShareInput,
-          rentIncludeTax,
-          rentWithholding,
-          rentHealthInsurance,
-          rentTotal,
-          rentExcludeTax,
-        };
-      },
-    }).mount("#app");
-  </script>
-</body>
-
+          return {
+            tab,
+            rent,
+            taxMode,
+            landlords,
+            withholdingRate,
+            alert,
+            openAlert,
+            closeAlert,
+            switchTab,
+            removeLandlord,
+            onAddLandlord,
+            identityLabel,
+            moneyFmt,
+            onShareInput,
+            rentIncludeTax,
+            rentWithholding,
+            rentHealthInsurance,
+            rentTotal,
+            rentExcludeTax,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
 </html>
