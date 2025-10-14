@@ -262,7 +262,8 @@
                       <div
                         class="text-[28px] font-semibold text-slate-800 mt-1"
                       >
-                        {{ formatMoney(companyPension + companyHealth + companyLabor) }}
+                        {{ formatMoney(companyPension + companyHealth +
+                        companyLabor) }}
                       </div>
                     </div>
                   </div>
@@ -514,7 +515,9 @@
           const companyPension = computed(
             () => row.value?.company?.pension6 ?? 0
           );
-          const companyTotal = computed(() => row.value?.company?.total ?? 0);
+          const companyTotal = computed(
+            () => row.value?.company?.total - row.value?.company?.extra ?? 0
+          );
 
           // 受 healthPerson 影響的欄位
           const employeeHealthAdj = computed(
