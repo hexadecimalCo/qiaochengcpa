@@ -7,34 +7,29 @@
     <meta name="darkreader-lock" />
     <meta name="theme-color" content="#ffffff" />
     <title>發票計算機</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
       tailwind.config = {
         darkMode: false,
       };
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
       [v-cloak] {
         display: none;
       }
-  
+
       :root {
         color-scheme: light !important;
       }
-  
+
       html,
       body {
         background-color: white !important;
         -webkit-filter: none !important;
         filter: none !important;
-      }
-  
-      @media (prefers-color-scheme: dark) {
-        html,
-        body {
-          background: #fff !important;
-        }
+        forced-color-adjust: none !important;
       }
     </style>
   </head>
@@ -308,16 +303,19 @@
                 >
                   <div class="relative w-full">
                     <span
-                      class="absolute -translate-x-1/2 w-[32px] left-[16px]">
+                      class="absolute -translate-x-1/2 w-[32px] left-[16px]"
+                    >
                       {{ new Date().getFullYear()-1911 }}
                     </span>
                     <span
-                      class="absolute -translate-x-1/2 w-[24px] text-center left-[75px]">
+                      class="absolute -translate-x-1/2 w-[24px] text-center left-[75px]"
+                    >
                       {{ new Date().getMonth() + 1 }}
                     </span>
                     <span
                       class="absolute -translate-x-1/2 w-[24px] text-center"
-                      :class="tab==='triple' ? 'right-[10px]' : 'right-[18px]'">
+                      :class="tab==='triple' ? 'right-[10px]' : 'right-[18px]'"
+                    >
                       {{ new Date().getDate() }}
                     </span>
                   </div>
