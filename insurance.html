@@ -328,9 +328,38 @@
         ref,
         computed,
         onMounted,
+        onUnmounted, // <-- 【新增】引入 onUnmounted
+        watch, // <-- 【新增】引入 watch
         watchEffect,
+        nextTick, // <-- 【新增】引入 nextTick
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
       import Papa from "https://cdn.jsdelivr.net/npm/papaparse@5.4.1/+esm";
+
+      // ==========================================================
+      // IFRAME 自動高度相關設定與函數
+      // ==========================================================
+      // 您的父頁面網域是 https://16n.com.tw，
+      // 但父頁面檢查的是訊息來源 (nativeEvent.origin)，
+      // 子頁面發送時，目標來源設為 '*' 或父頁面網域皆可。
+      let heightIntervalId = null;
+      let resizeTimeout = null;
+
+      // 取得文件高度並使用 postMessage 發送給父頁面
+      const sendHeight = () => {
+        // 使用 document.documentElement.scrollHeight 獲取整個文件的高度
+        const height = document.documentElement.scrollHeight;
+
+        if (window.parent) {
+          // 發送訊息。frameHeight 必須是 "NNNpx" 格式，因為父頁面是這樣接收的
+          window.parent.postMessage(
+            {
+              frameHeight: `${height}px`,
+              frameID: "insurance-frame",
+            },
+            "*" // 設為 '*' 允許所有網域接收，由父頁面檢查安全性
+          );
+        }
+      };
 
       // =========================
       // 設定
@@ -484,6 +513,11 @@
             healthPerson.value = Math.min(4, Math.max(1, n));
           });
 
+          // 【新增】監聽會改變內容的響應式變數，並在 DOM 更新後發送高度
+          watch([salary, healthPerson], () => {
+            nextTick(sendHeight);
+          });
+
           // selection（空輸入 → ZERO_SELECTION）
           const selection = computed(() => {
             const v = salary.value;
@@ -544,7 +578,26 @@
               console.error(e);
             } finally {
               loading.value = false;
+              // 【新增】首次載入完成，確保 DOM 穩定後發送高度
+              nextTick(sendHeight);
             }
+
+            // 【新增】生命週期鉤子：管理 postMessage 和 resize 監聽
+            // 1. 設置定時器，以處理非數據驅動的內容變化 (保險機制)
+            heightIntervalId = setInterval(sendHeight, 500);
+
+            // 2. 監聽視窗大小變化事件 (處理 RWD 重新排版後的高度變化)
+            const handleResize = () => {
+              clearTimeout(resizeTimeout);
+              resizeTimeout = setTimeout(sendHeight, 100);
+            };
+            window.addEventListener("resize", handleResize);
+          });
+
+          // 【新增】在元件卸載時清理資源
+          onUnmounted(() => {
+            clearInterval(heightIntervalId);
+            window.removeEventListener("resize", handleResize);
           });
 
           // export image
