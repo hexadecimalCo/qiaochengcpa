@@ -383,10 +383,29 @@
         ref,
         computed,
         watch,
+        nextTick, // 新增：用於等待 DOM 更新後再發送高度
+        onMounted, // 新增：元件掛載生命週期
+        onUnmounted, // 新增：元件卸載生命週期
       } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
 
       createApp({
         setup() {
+          const PARENT_DOMAIN = "https://www.qiaochengcpa.com.tw";
+          let heightIntervalId = null;
+          let resizeTimeout = null;
+
+          // 取得文件高度並發送給父頁面
+          const sendHeight = () => {
+            // 使用 document.documentElement.scrollHeight 獲取整個文件的高度
+            const height = document.documentElement.scrollHeight;
+
+            window.parent.postMessage({ frameHeight: height }, PARENT_DOMAIN);
+          };
+
+          // -------------------------------------------------------------
+          // 您的原有邏輯
+          // -------------------------------------------------------------
+
           // Tabs：三聯（公司）/ 二聯（個人）
           const tab = ref("triple");
           const invoiceSrc = computed(() =>
@@ -413,6 +432,8 @@
             } else {
               inclusive.value = toInclusive(exclusive.value, rate.value);
             }
+            // 稅率改變後，內容計算結果可能重新排版，因此發送高度
+            nextTick(sendHeight);
           });
 
           watch(taxType, () => {
@@ -421,6 +442,14 @@
             } else {
               rate.value = 0;
             }
+            // 稅別改變後，標籤位置可能移動，因此發送高度
+            nextTick(sendHeight);
+          });
+
+          // 監聽 Tab 改變 (三聯/二聯)
+          watch(tab, () => {
+            // Tab 切換會改變圖片和版面，可能影響高度
+            nextTick(sendHeight);
           });
 
           const POS = {
@@ -551,6 +580,9 @@
             source.value = "inclusive";
             inclusive.value = val;
             exclusive.value = round0(toExclusive(val, rate.value));
+
+            // 金額輸入改變，結果顯示可能影響高度
+            nextTick(sendHeight);
           };
           const onExclusiveInput = e => {
             let val = Number(onlyDigits(e.target.value)) || 0;
@@ -562,6 +594,9 @@
             // 反推含稅
             const inc = round0(toInclusive(val, rate.value));
             inclusive.value = inc > MAX_INC ? MAX_INC : inc;
+
+            // 金額輸入改變，結果顯示可能影響高度
+            nextTick(sendHeight);
           };
 
           const resetForm = () => {
@@ -570,10 +605,13 @@
             inclusive.value = 0;
             exclusive.value = 0;
             rate.value = 0.05;
+            // 重置表單可能讓高度恢復到最小，因此發送高度
+            nextTick(sendHeight);
           };
 
           const downloadImage = async () => {
             if (!invoicePreview.value) return;
+            // 下載圖片不影響 DOM 高度，不需要發送高度
             const canvas = await html2canvas(invoicePreview.value, {
               backgroundColor: "#ffffff", // 白底
               scale: 2, // 較高解析度
@@ -590,6 +628,30 @@
             link.href = canvas.toDataURL("image/png");
             link.click();
           };
+
+          // -------------------------------------------------------------
+          // 【新增】生命週期鉤子：管理 postMessage 和 resize 監聽
+          // -------------------------------------------------------------
+          onMounted(() => {
+            // 1. 首次載入時發送高度
+            sendHeight();
+
+            // 2. 設置定時器，以處理非數據驅動的內容變化 (如圖片延遲載入)
+            heightIntervalId = setInterval(sendHeight, 500);
+
+            // 3. 監聽視窗大小變化事件 (處理 RWD 重新排版後的高度變化)
+            const handleResize = () => {
+              clearTimeout(resizeTimeout);
+              resizeTimeout = setTimeout(sendHeight, 100);
+            };
+            window.addEventListener("resize", handleResize);
+          });
+
+          onUnmounted(() => {
+            // 清理定時器和事件監聽，防止記憶體洩漏
+            clearInterval(heightIntervalId);
+            window.removeEventListener("resize", handleResize);
+          });
 
           return {
             tab,
