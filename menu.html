@@ -6,17 +6,9 @@
     <meta name="color-scheme" content="light only" />
     <meta name="darkreader-lock" />
     <title>右下角浮動選單（純 HTML + CSS）</title>
+  </head>
+  <body>
     <style>
-      :root {
-        --fab-size: 40px;
-        --fab-gap: 12px;
-        --fab-bg: #fedc80; /* 近似 amber-300 */
-        --fab-bg-hover: #fbbf24; /* hover 色 */
-        --fab-radius: 8px;
-        --fab-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-        --fab-icon: #334155; /* 深石板色 */
-      }
-
       /* 容器固定在左側中下方 */
       .fab-menu {
         position: fixed;
@@ -24,20 +16,18 @@
         bottom: 120px;
         display: flex;
         flex-direction: column;
-        gap: var(--fab-gap);
+        gap: 12px;
         z-index: 9999;
       }
 
       /* 共用樣式：讓 <a> 也能套用 */
       .fab-btn {
-        width: var(--fab-size);
-        height: var(--fab-size);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: var(--fab-bg);
-        border-radius: var(--fab-radius);
-        box-shadow: var(--fab-shadow);
+        background: #fedc80;
+        border-radius: 8px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         cursor: pointer;
         transition: background 0.2s ease, transform 0.1s ease;
         text-decoration: none;
@@ -45,7 +35,7 @@
       }
 
       .fab-btn:hover {
-        background: var(--fab-bg-hover);
+        background: #fbbf24;
       }
       .fab-btn:active {
         transform: translateY(1px);
@@ -88,12 +78,13 @@
 
       @media (max-width: 768px) {
         .fab-menu {
-          display: none;
+          gap: 8px;
+        }
+        .fab-menu img {
+          width: 24px;
         }
       }
     </style>
-  </head>
-  <body>
     <nav class="fab-menu" aria-label="快速動作">
       <a
         href="https://www.qiaochengcpa.com.tw/ec99/rwd1528/category.asp?category_id=19"
