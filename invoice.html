@@ -490,7 +490,7 @@
           const inclusiveDisplay = computed(() => moneyFmt(inclusive.value));
           const exclusiveDisplay = computed(() => moneyFmt(exclusive.value));
           const vatAmount = computed(() =>
-            moneyFmt(exclusive.value * rate.value)
+            moneyFmt(inclusive.value - exclusive.value)
           );
           const taxTypeTag = computed(
             () => POS[tab.value]?.[taxType.value] ?? "bottom-0 left-0"
